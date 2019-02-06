@@ -1,1 +1,3 @@
-# TFG
+# Integración digital de la gestión del horario de los estudiantes de la ETSIT
+
+La digitalización es una de las actividades fundamentales que toda empresa y organización pública debe afrontar de forma continua en los últimos años. Con el objetivo de contribuir a la digitalización de la universidad se ha decidido desarrollar una aplicación web que permita a los alumnos consultar los horarios de las asignaturas de las que van a matricularse, de forma que puedan comprobar de forma sencilla si se produce algún solapamiento y poder probar dinámicamente con distintos grupos hasta encontrar la combinación que mejor se ajuste a sus necesidades
