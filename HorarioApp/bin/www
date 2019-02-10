@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+// Use dotenv to read .env vars into Node (not necessary in production)
+require('dotenv').config();
+
 /**
  * Module dependencies.
  */
