@@ -14,6 +14,9 @@ let app = express();
 // Variable para establecer el contexto cuando la app se despliegue en el servidor
 const contextPath = path.normalize(process.env.CONTEXT);
 
+// Middleware para imprimir información de debug
+let printController = require('./controllers/printController')
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -43,13 +46,24 @@ let cas = new CASAuthentication({
   destroy_session : true // Borra la sesión al hacer logout
 });
 
+// Helper dinamico:
+app.use(function (req, res, next) {
+
+  // Hacer visible req.session en las vistas
+  res.locals.session = req.session;
+
+  // Guardar la información de la sesión cas en req.session.user
+  //req.session.user = req.session[cas.user.info]
+
+  next();
+});
 
 /**
  * Rutas que comienzan por contextPath usan indexRouter.
  * Los clientes no autenticados son redirigidos al CAS login.
  * Después son redirigidos a la ruta deseada.
  */
-app.use(contextPath, cas.bounce, indexRouter);
+app.use(contextPath, cas.bounce, printController.session, indexRouter);
 
 /**
  * Ruta para desautenticar al cliente.
@@ -57,15 +71,6 @@ app.use(contextPath, cas.bounce, indexRouter);
  */
 app.get(path.join(contextPath, '/logout'), cas.logout);
 
-
-// Helper dinamico:
-/* app.use(function (req, res, next) {
-
-    // Hacer visible req.session en las vistas
-    res.locals.session = req.session;
-
-    next();
-}); */
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
