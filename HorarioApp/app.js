@@ -1,21 +1,25 @@
-let createError = require('http-errors');
-let express = require('express');
-let path = require('path');
-let cookieParser = require('cookie-parser');
-let logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
-let indexRouter = require('./routes/index');
+const session = require('express-session');
+const CASAuthentication = require('cas-authentication');
 
-let session = require('express-session');
-let CASAuthentication = require('cas-authentication');
+// Router principal
+const indexRouter = require('./routes/index');
 
-let app = express();
+const app = express();
 
 // Variable para establecer el contexto cuando la app se despliegue en el servidor
 const contextPath = path.normalize(process.env.CONTEXT);
 
 // Middleware para imprimir información de debug
-let printController = require('./controllers/printController')
+const printController = require('./controllers/printController');
+
+// Middleware que comprueba que el usuario autenticado en el CAS es un alumno
+const permissionController = require('./controllers/permissionController');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -25,35 +29,34 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(contextPath ,express.static(path.join(__dirname, 'public')));
+app.use(contextPath, express.static(path.join(__dirname, 'public')));
 
 // Set up an Express session.
-app.use( session({
-  secret            : process.env.SESSION_SECRET,
-  resave            : false,
-  saveUninitialized : true
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
 }));
 
 // Create a new instance of CASAuthentication.
-const service_url = process.env.SERVICE;
-const cas_url = process.env.CAS;
+const serviceUrl = process.env.SERVICE;
+const casUrl = process.env.CAS;
 
-let cas = new CASAuthentication({
-  cas_url: cas_url,
-  service_url: service_url,
+const cas = new CASAuthentication({
+  cas_url: casUrl,
+  service_url: serviceUrl,
   cas_version: '3.0',
   session_info: 'user',
-  destroy_session : true // Borra la sesión al hacer logout
+  destroy_session: true, // Borra la sesión al hacer logout
 });
 
 // Helper dinamico:
-app.use(function (req, res, next) {
-
+app.use((req, res, next) => {
   // Hacer visible req.session en las vistas
   res.locals.session = req.session;
 
   // Guardar la información de la sesión cas en req.session.user
-  //req.session.user = req.session[cas.user.info]
+  // req.session.user = req.session[cas.user.info]
 
   next();
 });
@@ -63,7 +66,11 @@ app.use(function (req, res, next) {
  * Los clientes no autenticados son redirigidos al CAS login.
  * Después son redirigidos a la ruta deseada.
  */
-app.use(contextPath, cas.bounce, printController.session, indexRouter);
+app.use(contextPath,
+  cas.bounce,
+  printController.session,
+  permissionController.checkStudentRole,
+  indexRouter);
 
 /**
  * Ruta para desautenticar al cliente.
@@ -73,12 +80,12 @@ app.get(path.join(contextPath, '/logout'), cas.logout);
 
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use((err, req, res) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

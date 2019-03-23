@@ -1,9 +1,9 @@
 // Middleware para imprimir información de debug
 
 exports.session = function (req, res, next) {
-    console.log(req.session);
-    next();
-}
+  console.log(req.session);
+  next();
+};
 
 /* JSON Session format
 
@@ -28,6 +28,5 @@ Session {
        employeetype: 'A',
        longtermauthenticationrequesttokenused: 'false',
        sn: 'CRIADO BENITEZ',
-       irispersonaluniqueidupm: '51007192T' } } */
- 
-  
+       irispersonaluniqueidupm: '51007192T' } }
+*/
