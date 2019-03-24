@@ -3,9 +3,13 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const methodOverride = require('method-override');
 
 const session = require('express-session');
 const CASAuthentication = require('cas-authentication');
+
+// Middleware para usar un marco común a todas las vistas
+const partials = require('express-partials');
 
 // Router principal
 const indexRouter = require('./routes/index');
@@ -29,7 +33,9 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(methodOverride('_method')); // override with POST having ?_method=DELETE
 app.use(contextPath, express.static(path.join(__dirname, 'public')));
+app.use(partials());
 
 // Set up an Express session.
 app.use(session({
