@@ -1,4 +1,3 @@
-
 // Comprobamos que el usuario es un alumno
 exports.checkStudentRole = (req, res, next) => {
   const role = req.session.user.employeetype;

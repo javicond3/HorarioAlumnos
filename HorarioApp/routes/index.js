@@ -2,19 +2,26 @@ const express = require('express');
 
 const router = express.Router();
 
-/* GET home page. */
+const cursoActualController = require('../controllers/cursoActualController');
+const planificadorController = require('../controllers/planificadorController');
+const horariosGuardadosController = require('../controllers/horariosGuradadosController');
+
+/* GET home page.
+(redirige a curso_actual/horario) */
 router.get('/', (req, res) => {
-  res.render('index');
+  res.redirect('/curso_actual/horario');
 });
 
-/* GET planificador. */
-router.get('/planificador', (req, res) => {
-  res.render('planificador');
-});
+/* Rutas de curso actual. */
+router.get('/curso_actual/horario', cursoActualController.horario);
+router.get('/curso_actual/examenes', cursoActualController.examenes);
 
-/* GET horarios guardados. */
-router.get('/horarios', (req, res) => {
-  res.render('horarios');
-});
+/* Rutas de planificador. */
+router.get('/planificador', planificadorController.planificador);
+router.get('/planificador_2', planificadorController.planificador_2);
+router.get('/planificador_3', planificadorController.planificador_3);
+
+/* Rutas de horarios guardados. */
+router.get('/horarios_guardados', horariosGuardadosController.horarios);
 
 module.exports = router;
