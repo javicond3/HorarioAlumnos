@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const methodOverride = require('method-override');
+const favicon = require('serve-favicon');
 
 const session = require('express-session');
 const CASAuthentication = require('cas-authentication');
@@ -29,6 +30,7 @@ const permissionController = require('./controllers/permissionController');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -73,9 +75,9 @@ app.use((req, res, next) => {
  * Después son redirigidos a la ruta deseada.
  */
 app.use(contextPath,
-  cas.bounce,
-  printController.session,
-  permissionController.checkStudentRole,
+  // cas.bounce,
+  // printController.session,
+  // permissionController.checkStudentRole,
   indexRouter);
 
 /**

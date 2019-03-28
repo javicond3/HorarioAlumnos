@@ -7,14 +7,14 @@ router.get('/', (req, res) => {
   res.render('index');
 });
 
-/* GET prueba 1. */
-router.get('/prueba1', (req, res) => {
-  res.render('prueba1');
+/* GET planificador. */
+router.get('/planificador', (req, res) => {
+  res.render('planificador');
 });
 
-/* GET prueba 2. */
-router.get('/prueba2', (req, res) => {
-  res.render('prueba2');
+/* GET horarios guardados. */
+router.get('/horarios', (req, res) => {
+  res.render('horarios');
 });
 
 module.exports = router;
