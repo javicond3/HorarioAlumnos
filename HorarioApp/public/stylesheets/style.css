@@ -11,14 +11,7 @@ body {
 el espacio entre el header y el footer*/
 main > div > .row {
   min-height: calc(100vh - 112px); /* 100vh - x, where x=header+footer height */
-}
-
-#sidebar{
-  background-color: aqua;
-}
-
-#content{
-  background-color: blueviolet;
+  padding-top: 15px;
 }
 
 footer {

@@ -1,8 +1,182 @@
-<div class="row align-items-center">
+<div class="row">
+
     <div id="sidebar" class="col-md-3">
-        plan
-    </div>
-    <div id="content" class="col-md-9">
+
+        <div id="filter">
+            <h4>Filtros</h4>
+            <form method="GET" action="/filtrar">
+                <div class="form-group">
+                    <label for="grado">Grado</label>
+                    <select class="form-control" id="grado" name="grado">
+                        <option value="09TT">Teleco</option>
+                        <option value="09TT">Biomédica</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <span id="curso">Curso</span>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="primero" value="1" name="curso">
+                        <label class="form-check-label" for="primero">1º</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="segundo" value="2" name="curso">
+                        <label class="form-check-label" for="segundo">2º</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="tercero" value="3" name="curso">
+                        <label class="form-check-label" for="tercero">3º</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="cuarto" value="4" name="curso">
+                        <label class="form-check-label" for="cuarto">4º</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <span id="semestre">Semestre</span>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="semestre" id="semestre1" value="S1">
+                        <label class="form-check-label" for="semestre1">1</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="semestre" id="semestre2" value="S2">
+                        <label class="form-check-label" for="semestre2">2</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="itinerario">Itinerario</label>
+                    <select class="form-control" id="itinerario" name="itinerario">
+                        <option value="sist">Sistemas</option>
+                        <option value="tele">Telemática</option>
+                        <option value="imso">Imagen y sonido</option>
+                        <option value="elec">Electrónica</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ano">Año</label>
+                    <select class="form-control" id="ano" name="ano">
+                        <option value="201819">2018-2019</option>
+                        <option value="201920">2019-2020</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+            </form>
+        </div>
+
+        <div id="details">
+            <h4>Detalles</h4>
+            <ul>
+                <li>Cursos: 3º, 4º</li>
+                <li>
+                    Nº de asignaturas:
+                    <ul>
+                        <li>1er semestre: 6</li>
+                        <li>2º semestre: 4</li>
+                    </ul>
+                </li>
+                <li>
+                    Horas de clase:
+                    <ul>
+                        <li>1er semestre: 20h/semana</li>
+                        <li>2º semestre: 16h/semana</li>
+                    </ul>
+                </li>
+                <li>Total créditos ECTS: 55</li>
+            </ul>
+        </div>
 
     </div>
+
+    <div id="content" class="col-md-9">
+
+        <div id="disponibles">
+            <h4>Asignaturas disponibles</h4>
+            <table class="table table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Curso</th>
+                        <th scope="col">Semestre</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Acrónimo</th>
+                        <th scope="col">ECTS</th>
+                        <th scope="col">Añadir</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2º</td>
+                        <td>2</td>
+                        <td>Análisis y diseño de software</td>
+                        <td>ADSW</td>
+                        <td>4.5</td>
+                        <td>+</td>
+                    </tr>
+                    <tr>
+                        <td>2º</td>
+                        <td>2</td>
+                        <td>Análisis y diseño de software</td>
+                        <td>ADSW</td>
+                        <td>4.5</td>
+                        <td>+</td>
+                    </tr>
+                    <tr>
+                        <td>2º</td>
+                        <td>2</td>
+                        <td>Análisis y diseño de software</td>
+                        <td>ADSW</td>
+                        <td>4.5</td>
+                        <td>+</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="seleccionadas">
+            <h4>Asignaturas seleccionadas</h4>
+            <table class="table table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Curso</th>
+                        <th scope="col">Semestre</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Acrónimo</th>
+                        <th scope="col">ECTS</th>
+                        <th scope="col">Quitar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2º</td>
+                        <td>2</td>
+                        <td>Análisis y diseño de software</td>
+                        <td>ADSW</td>
+                        <td>4.5</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>2º</td>
+                        <td>2</td>
+                        <td>Análisis y diseño de software</td>
+                        <td>ADSW</td>
+                        <td>4.5</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>2º</td>
+                        <td>2</td>
+                        <td>Análisis y diseño de software</td>
+                        <td>ADSW</td>
+                        <td>4.5</td>
+                        <td>-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="botones">
+            <button class="btn btn-danger" type="delete"> Borrar todo</button>
+            <a class="btn btn-primary" href="/planificador_2" role="button">Confirmar</a>
+        </div>
+
+    </div>
+
 </div>

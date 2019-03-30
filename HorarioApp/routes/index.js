@@ -5,6 +5,7 @@ const router = express.Router();
 const cursoActualController = require('../controllers/cursoActualController');
 const planificadorController = require('../controllers/planificadorController');
 const horariosGuardadosController = require('../controllers/horariosGuradadosController');
+const filtroController = require('../controllers/filtroController');
 
 /* GET home page.
 (redirige a curso_actual/horario) */
@@ -20,6 +21,9 @@ router.get('/curso_actual/examenes', cursoActualController.examenes);
 router.get('/planificador', planificadorController.planificador);
 router.get('/planificador_2', planificadorController.planificador_2);
 router.get('/planificador_3', planificadorController.planificador_3);
+
+/* Ruta para el filtro del planificador */
+router.get('/filtrar', filtroController.filtrarAsignaturas);
 
 /* Rutas de horarios guardados. */
 router.get('/horarios_guardados', horariosGuardadosController.horarios);

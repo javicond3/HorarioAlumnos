@@ -1,6 +1,13 @@
+const fetch = require('node-fetch');
+
 // GET /planificador
 exports.planificador = (req, res) => {
-  res.render('planificador/planificador');
+  const url = 'https://jsonplaceholder.typicode.com/todos/1';
+  fetch(url)
+    .then(respuesta => respuesta.json())
+    .then(json => console.log(json))
+    .then(() => res.render('planificador/planificador'))
+    .catch(err => console.error(err));
 };
 
 // GET /planificador_2
