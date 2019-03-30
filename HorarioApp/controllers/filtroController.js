@@ -31,7 +31,7 @@ const generarFilasTablaAsig = (asignaturas) => {
 
 
 // GET /filtrar
-exports.filtrarAsignaturas = (req, res) => {
+exports.filtrarAsignaturas = (req, res, next) => {
   // Datos introducidos en el formulario
   const response = {
     grado: req.query.grado,
@@ -40,8 +40,7 @@ exports.filtrarAsignaturas = (req, res) => {
     itinerario: req.query.itinerario,
     ano: req.query.ano,
   };
-
-  console.log(response);
+  // console.log(response);
 
   // URL para pedir el JSON con las asignaturas deseadas
   //  const url = `https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/${response.grado}/${response.ano}/${response.semestre}/${response.curso[0]}`;
@@ -52,9 +51,9 @@ exports.filtrarAsignaturas = (req, res) => {
   fetch(url)
     .then(respuesta => respuesta.json())
     .then((json) => {
-      console.log(json);
-      const fil = generarFilasTablaAsig(json);
-      res.render('planificador/planificador', { filas: fil });
+      // console.log(json);
+      res.locals.asignaturas = generarFilasTablaAsig(json);
+      next();
     })
     .catch(err => console.error(err));
 };

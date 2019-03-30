@@ -1,8 +1,16 @@
-const fetch = require('node-fetch');
-
 // GET /planificador
 exports.planificador = (req, res) => {
-  res.render('planificador/planificador', { filas: '' });
+  let filas = '';
+
+  /**
+  * Si se han filtrado asginaturas, se carga la variable en la que están
+  * almacenadas.
+  * Si no (entrando al planificador directamente), la tabla estará vacía.
+  */
+  if (res.locals.asignaturas) {
+    filas = res.locals.asignaturas;
+  }
+  res.render('planificador/planificador', { asignaturasDisp: filas });
 };
 
 // GET /planificador_2
