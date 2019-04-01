@@ -1,29 +1,30 @@
 // GET /planificador
 exports.planificador = (req, res) => {
-  let filas = '';
+  // Mensaje que se mostrará en la tabla por defecto (antes de usar el filtro)
+  let filasAsig = `<tr>
+    <td colspan="6">Usa el filtro para buscar asignaturas</td>
+  </tr>`;
 
-  /**
-  * Si se han filtrado asginaturas, se carga la variable en la que están
-  * almacenadas.
-  * Si no (entrando al planificador directamente), la tabla estará vacía.
-  */
+  let filasSelec = '';
+
+  // Si se han filtrado asginaturas, se carga la variable en la que están almacenadas.
   if (res.locals.asignaturas) {
-    filas = res.locals.asignaturas;
+    filasAsig = res.locals.asignaturas.tablaDisp;
+    filasSelec = res.locals.asignaturas.tablaSelec;
   }
-  res.render('planificador/planificador', { asignaturasDisp: filas });
+
+  // Scripts que se incluyen en la vista para el lado cliente
+  const scripts = '<script src="javascripts/tablaAsignaturas.js"></script>';
+
+  res.render('planificador/planificador', { asignaturasDisp: filasAsig, asignaturasSelec: filasSelec, scripts });
 };
 
 // GET /planificador_2
 exports.planificador_2 = (req, res) => {
-  res.render('planificador/planificador_2');
+  res.render('planificador/planificador_2', { scripts: '' });
 };
 
 // GET /planificador_3
 exports.planificador_3 = (req, res) => {
-  res.render('planificador/planificador_3');
+  res.render('planificador/planificador_3', { scripts: '' });
 };
-
-/* res.render('ruta', {
-    var1: x,
-    var2: y
-}); */

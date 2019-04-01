@@ -8,10 +8,17 @@ body {
 }
 
 /* Para que el contenido principal ocupe todo
-el espacio entre el header y el footer*/
+ * el espacio entre el header y el footer */
 main > div > .row {
   min-height: calc(100vh - 112px); /* 100vh - x, where x=header+footer height */
   padding-top: 15px;
+}
+
+/* En el planificador, las filas de la tabla de seleccionadas
+ * deben permancer ocultas (hasta que se haga click sobre ellas
+ * en la tabla de disponibles)*/
+.selecTableRow {
+  display: none;
 }
 
 footer {
