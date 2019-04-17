@@ -102,7 +102,23 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <%- asignaturasDisp %>
+                    <% if (asignaturas) { %>
+                    <% asignaturas.forEach((asig, index) => { %>
+                    <tr class="dispTableRow" id="disp<%= index %>">
+                        <td><%= asig.curso %>º</td>
+                        <td><%= asig.semestre %></td>
+                        <td><%= asig.nombre %></td>
+                        <td><%= asig.acronimo %></td>
+                        <td><%= asig.creditos %></td>
+                        <td>+</td>
+                    </tr>
+                    <% }); %>
+                    <% } else { %>
+                    <tr>
+                        <td colspan="6">Usa el filtro para buscar asignaturas</td>
+                    </tr>
+                    <% } %>
+
                 </tbody>
             </table>
         </div>
@@ -121,7 +137,19 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <%- asignaturasSelec %>
+                    <% if (asignaturas) { %>
+                    <% asignaturas.forEach((asig, index) => { %>
+                    <tr class="selecTableRow" id="selec<%= index %>">
+                        <td><%= asig.curso %>º</td>
+                        <td><%= asig.semestre %></td>
+                        <td><%= asig.nombre %></td>
+                        <td><%= asig.acronimo %></td>
+                        <td><%= asig.creditos %></td>
+                        <td>-</td>
+                    </tr>
+                    <% }); %>
+                    <% } %>
+
                 </tbody>
             </table>
         </div>

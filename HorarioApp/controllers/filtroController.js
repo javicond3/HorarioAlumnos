@@ -1,45 +1,5 @@
 const fetch = require('node-fetch');
 
-/**
- * Función auxiliar que toma un array de asignaturas y devuelve el código
- * html de la tablas, con tantas filas como asignaturas haya en el array.
- *
- * @param {Array} asignaturas Array con las asignaturas.
- *
- * @returns {tablaDisp: string, tablaSelec: string}
- *           Código HTML de las filas de ambas tablas.
- */
-const generarFilasTablaAsig = (asignaturas) => {
-  const html = { tablaDisp: '', tablaSelec: '' };
-
-  // Comprobamos que el parámetro es un array y no está vacío
-  if (Array.isArray(asignaturas) && asignaturas.length) {
-    asignaturas.forEach((asig, index) => {
-      const tableData = `<td>${asig.curso}º</td>
-      <td>${asig.semestre}</td>
-      <td>${asig.nombre}</td>
-      <td>${asig.acronimo}</td>
-      <td>${asig.creditos}</td>`;
-
-      const dispRow = `<tr class="dispTableRow" id="disp${index}">
-        ${tableData}
-        <td>+</td>
-      </tr>`;
-
-      const selecRow = `<tr class="selecTableRow" id="selec${index}">
-      ${tableData}
-      <td>-</td>
-    </tr>`;
-
-      html.tablaDisp += dispRow;
-      html.tablaSelec += selecRow;
-    });
-  }
-
-  return html;
-};
-
-
 // GET /filtrar
 exports.filtrarAsignaturas = (req, res, next) => {
   // Datos introducidos en el formulario
@@ -62,7 +22,7 @@ exports.filtrarAsignaturas = (req, res, next) => {
     .then(respuesta => respuesta.json())
     .then((json) => {
       // console.log(json);
-      res.locals.asignaturas = generarFilasTablaAsig(json);
+      res.locals.asignaturas = json;
       next();
     })
     .catch(err => console.error(err));
