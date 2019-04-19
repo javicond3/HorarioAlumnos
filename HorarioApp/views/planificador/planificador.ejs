@@ -141,6 +141,7 @@
                     <% if (asignaturas) { %>
                     <% asignaturas.forEach((asig, index) => { %>
                     <tr class="selecTableRow" id="selec<%= index %>">
+                        <td class="codigo d-none"><%= asig.codigo %></td>
                         <td><%= asig.curso %>º</td>
                         <td><%= asig.semestre %></td>
                         <td><%= asig.nombre %></td>
@@ -157,7 +158,10 @@
 
         <div id="botones">
             <button class="btn btn-danger" type="delete"> Borrar todo</button>
-            <a class="btn btn-primary" href="/planificador_2" role="button">Confirmar</a>
+            <form id="asigForm" class="d-inline" method="POST" action="/planificador_2">
+                <input type="hidden" name="asigSelec" value="">
+                <button class="btn btn-primary" type="submit" id="confirmar"> Confirmar</button>
+            </form>
         </div>
 
     </div>

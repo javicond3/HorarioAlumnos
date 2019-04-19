@@ -6,6 +6,7 @@ const cursoActualController = require('../controllers/cursoActualController');
 const planificadorController = require('../controllers/planificadorController');
 const horariosGuardadosController = require('../controllers/horariosGuradadosController');
 const filtroController = require('../controllers/filtroController');
+const getHorariosController = require('../controllers/getHorariosController');
 
 /* GET home page.
 (redirige a curso_actual/horario) */
@@ -19,13 +20,13 @@ router.get('/curso_actual/examenes', cursoActualController.examenes);
 
 /* Rutas de planificador. */
 router.get('/planificador', planificadorController.planificador);
-router.get('/planificador_2', planificadorController.planificador_2);
-router.get('/planificador_3', planificadorController.planificador_3);
-
-/* Ruta para el filtro del planificador */
-router.get('/filtrar',
+router.get('/filtrar', // Ruta para el filtro del planificador
   filtroController.filtrarAsignaturas,
   planificadorController.planificador);
+router.post('/planificador_2',
+  getHorariosController.getHorarios,
+  planificadorController.planificador_2);
+router.get('/planificador_3', planificadorController.planificador_3);
 
 /* Rutas de horarios guardados. */
 router.get('/horarios_guardados', horariosGuardadosController.horarios);

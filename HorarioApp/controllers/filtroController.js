@@ -57,8 +57,6 @@ exports.filtrarAsignaturas = (req, res, next) => {
   );
 
   fetchJSONs.then(() => {
-    console.log(asignaturasJSON);
-
     res.locals.asignaturas = asignaturasJSON;
     next();
   });

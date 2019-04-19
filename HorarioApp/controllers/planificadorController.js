@@ -6,8 +6,10 @@ exports.planificador = (req, res) => {
   res.render('planificador/planificador', { asignaturas: res.locals.asignaturas, scripts });
 };
 
-// GET /planificador_2
+// POST /planificador_2
 exports.planificador_2 = (req, res) => {
+  // Scripts que se incluyen en la vista para el lado cliente
+  // const scripts = [''];
   res.render('planificador/planificador_2', { scripts: '' });
 };
 

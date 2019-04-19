@@ -17,7 +17,7 @@ main > div > .row {
 /* En el planificador, las filas de la tabla de seleccionadas
  * deben permancer ocultas (hasta que se haga click sobre ellas
  * en la tabla de disponibles)*/
-.selecTableRow {
+ .selecTableRow {
   display: none;
 }
 
