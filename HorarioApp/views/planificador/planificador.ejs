@@ -160,6 +160,9 @@
             <button class="btn btn-danger" type="delete"> Borrar todo</button>
             <form id="asigForm" class="d-inline" method="POST" action="/planificador_2">
                 <input type="hidden" name="asigSelec" value="">
+                <input type="hidden" name="grado" value="<%= grado %>">
+                <input type="hidden" name="ano" value="<%= ano %>">
+                <input type="hidden" name="semestre" value="<%= semestre %>">
                 <button class="btn btn-primary" type="submit" id="confirmar"> Confirmar</button>
             </form>
         </div>

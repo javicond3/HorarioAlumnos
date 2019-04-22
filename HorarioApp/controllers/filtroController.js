@@ -11,6 +11,12 @@ exports.filtrarAsignaturas = (req, res, next) => {
     ano: req.query.ano,
   };
 
+  // Guardamos los parámetros en variable local para que sean accesibles
+  // en el siguiente middleware y las vistas
+  res.locals.grado = response.grado;
+  res.locals.ano = response.ano;
+  res.locals.semestre = response.semestre;
+
   // URL para pedir el JSON con las asignaturas deseadas
   //  const url = `https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/${response.grado}/${response.ano}/${response.semestre}/${response.curso[0]}`;
 
