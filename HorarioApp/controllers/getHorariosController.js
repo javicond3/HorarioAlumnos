@@ -1,3 +1,5 @@
+const fetch = require('node-fetch');
+
 // POST /planificador_2
 exports.getHorarios = (req, res, next) => {
   // Array con los códigos de las asignaturas seleccionadas
@@ -18,15 +20,25 @@ exports.getHorarios = (req, res, next) => {
       break;
   }
 
-  console.log(asignaturas);
-  console.log(grado);
-  console.log(ano);
-  console.log(semestre);
+  let listaAsignaturas = '';
 
+  asignaturas.forEach((asig) => {
+    listaAsignaturas += `${asig},`;
+  });
 
   // URL para pedir el JSON con las asignaturas deseadas
-  // const url = `https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/${response.grado}/${response.ano}/${response.semestre}/${}/horarios`;
   // https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/09TT/201718/I/95000001/horarios
 
-  next();
+  // const url = `https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/${grado}/${ano}/${semestre}/${listaAsignaturas}/horarios`;
+  const url = `https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/${grado}/201718/${semestre}/${listaAsignaturas}/horarios`;
+
+  console.log(url);
+
+  fetch(url)
+    .then(respuesta => respuesta.json())
+    .then((json) => {
+      res.locals.asigConHorario = json;
+      next();
+    })
+    .catch(err => console.error(err));
 };
