@@ -7,6 +7,7 @@ const planificadorController = require('../controllers/planificadorController');
 const horariosGuardadosController = require('../controllers/horariosGuradadosController');
 const filtroController = require('../controllers/filtroController');
 const getHorariosController = require('../controllers/getHorariosController');
+const generaHorariosController = require('../controllers/generaHorariosController');
 
 /* GET home page.
 (redirige a curso_actual/horario) */
@@ -25,6 +26,7 @@ router.get('/filtrar', // Ruta para el filtro del planificador
   planificadorController.planificador);
 router.post('/planificador_2',
   getHorariosController.getHorarios,
+  generaHorariosController.generarHorarios,
   planificadorController.planificador_2);
 router.get('/planificador_3', planificadorController.planificador_3);
 
