@@ -1,14 +1,14 @@
 /* eslint-disable no-prototype-builtins */
 /* eslint-disable quote-props */
 
-// POST /planificador_2
-exports.generarHorarios = (req, res, next) => {
-  // JSON con las asignaturas (y sus detalles, incluyendo horarios)
-  // recibido de la API en el middleware anterior.
-  const asignaturas = res.locals.asigConHorario;
-
-  // Objeto con en los que guardaremos la información de la API
-  // con una estructura más manejable para pasos posteriores
+/**
+ * Función que toma un JSON con las asignaturas tal cual se obtiene de la API
+ * y devuelve un objeto con la información reorganizada en una estructura de
+ * {cursos : {grupos: {días: {horas:acronimo}}} para que sea más fácil de manejar
+ * a la hora de hacer combinaciones posteriormente.
+ */
+const formatearHorarios = (asignaturas) => {
+  // Objeto para guardar los horarios reestructurados
   const horariosPorCurso = {};
 
   // Días de la semana
@@ -68,6 +68,19 @@ exports.generarHorarios = (req, res, next) => {
       });
     });
   });
+
+  return horariosPorCurso;
+};
+
+// POST /planificador_2
+exports.generarHorarios = (req, res, next) => {
+  // JSON con las asignaturas (y sus detalles, incluyendo horarios)
+  // recibido de la API en el middleware anterior.
+  const asignaturas = res.locals.asigConHorario;
+
+  // Objeto en el que guardamos la información de la API
+  // con una estructura más manejable para pasos posteriores
+  const horariosPorCurso = formatearHorarios(asignaturas);
 
   next();
 };
