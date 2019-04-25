@@ -72,6 +72,50 @@ const formatearHorarios = (asignaturas) => {
   return horariosPorCurso;
 };
 
+/**
+ * Función que un array de arrays y calcula todas las combinaciones (no importa el orden)
+ * posibles entre los elementos de todos los arrays.
+ *
+ * Por ejemplo, cartesian([[0,1],[2,3]]) devolverá [[0,2],[0,3],[1,2],[1,3]]
+ */
+const cartesian = (arrDeArrays) => {
+  const r = [];
+  const args = arrDeArrays;
+  const max = args.length - 1;
+
+  function helper(arr, i) {
+    for (let j = 0, l = args[i].length; j < l; j++) {
+      const a = arr.slice(0); // clone arr
+      a.push(args[i][j]);
+      if (i === max) { r.push(a); } else { helper(a, i + 1); }
+    }
+  }
+  helper([], 0);
+  return r;
+};
+
+/**
+ * Función que recibe un horario ya formateado y devuelve un array con todas
+ * las combinaciones usando la función cartesian().
+ *
+ */
+const calcCombinaciones = (horario) => {
+  const arrDeArrays = []; // Array con los arrays de grupos de cada curso
+
+  Object.keys(horario).forEach((numCurso) => {
+    const curso = horario[numCurso];
+    const gruposDeCurso = []; // Cada curso tiene unos grupos
+
+    Object.keys(curso).forEach((numGrupo) => {
+      gruposDeCurso.push(numGrupo);
+    });
+
+    arrDeArrays.push(gruposDeCurso);
+  });
+
+  return cartesian(arrDeArrays);
+};
+
 // POST /planificador_2
 exports.generarHorarios = (req, res, next) => {
   // JSON con las asignaturas (y sus detalles, incluyendo horarios)
@@ -81,6 +125,9 @@ exports.generarHorarios = (req, res, next) => {
   // Objeto en el que guardamos la información de la API
   // con una estructura más manejable para pasos posteriores
   const horariosPorCurso = formatearHorarios(asignaturas);
+
+  // Array con todas las combinaciones posibles de grupos
+  const combGrupos = calcCombinaciones(horariosPorCurso);
 
   next();
 };
