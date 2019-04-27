@@ -2,15 +2,12 @@
 /* eslint-disable quote-props */
 
 /**
- * Función que toma un JSON con las asignaturas tal cual se obtiene de la API
- * y devuelve un objeto con la información reorganizada en una estructura de
- * {cursos : {grupos: {días: {horas:acronimo}}} para que sea más fácil de manejar
- * a la hora de hacer combinaciones posteriormente.
+ * Función que devuelve un objeto con los días de la semana, cada uno con un
+ * objeto anidado donde cada propiedad es una hora del día. El valor de la
+ * esta propiedad es por defecto un string vacío que posteriormente se podrá
+ * rellenar con el acrónimo de la asignatura impartida a dicha hora.
  */
-const formatearHorarios = (asignaturas) => {
-  // Objeto para guardar los horarios reestructurados
-  const horariosPorCurso = {};
-
+const generaDiasConHoras = () => {
   // Días de la semana
   const dias = {
     L: {},
@@ -40,8 +37,21 @@ const formatearHorarios = (asignaturas) => {
 
   // Rellenamos los dias con las horas
   Object.keys(dias).forEach((dia) => {
-    dias[dia] = JSON.parse(JSON.stringify(horas)); // Hacemos una copia de 'horas' por cada día
+    dias[dia] = JSON.parse(JSON.stringify(horas)); // Hacemos una copia de 'horas' para cada día
   });
+
+  return dias;
+};
+
+/**
+ * Función que toma un JSON con las asignaturas tal cual se obtiene de la API
+ * y devuelve un objeto con la información reorganizada en una estructura de
+ * {cursos : {grupos: {días: {horas:acronimo}}} para que sea más fácil de manejar
+ * a la hora de hacer combinaciones posteriormente.
+ */
+const formatearHorarios = (asignaturas) => {
+  // Objeto para guardar los horarios reestructurados
+  const horariosPorCurso = {};
 
   Object.keys(asignaturas).forEach((codigoAsig) => {
     const asignatura = asignaturas[codigoAsig];
@@ -57,8 +67,8 @@ const formatearHorarios = (asignaturas) => {
       // Si el grupo en el que se imparte esta asignatura no está en el objeto, se añade
       // Además se le añaden los días (que ya llevan las horas)
       if (!horariosPorCurso[asignatura.curso].hasOwnProperty(numeroGrupo)) {
-        // Una copia de 'días' por cada curso
-        horariosPorCurso[asignatura.curso][numeroGrupo] = JSON.parse(JSON.stringify(dias));
+        // Añadimos un objeto días con horas a cada curso
+        horariosPorCurso[asignatura.curso][numeroGrupo] = generaDiasConHoras();
       }
 
       grupo.horario.forEach((clase) => {
@@ -128,6 +138,40 @@ exports.generarHorarios = (req, res, next) => {
 
   // Array con todas las combinaciones posibles de grupos
   const combGrupos = calcCombinaciones(horariosPorCurso);
+
+  // Array con todos los horarios resultantes de las combinaciones
+  const horariosCombinados = [];
+
+  // Para cada combinación de grupos generamos un horario
+  combGrupos.forEach((comb) => {
+    const horarioCombinado = {
+      grupos: comb, // Grupos que forman el horario
+      haySolapamiento: false, // Indica si hay solapamiento de asignaturas
+      tabla: generaDiasConHoras(), // Tabla para representarlo en la vista
+    };
+
+    comb.forEach((grupo) => {
+      const curso = grupo.charAt(0); // El primer caracter del grupo es el curso
+      const horarioGrupo = horariosPorCurso[curso][grupo];
+      Object.keys(horarioGrupo).forEach((dia) => {
+        const horarioDia = horarioGrupo[dia];
+        Object.keys(horarioDia).forEach((hora, index) => {
+          const asignatura = horarioDia[hora];
+
+          if (asignatura !== '') { // Si a esa hora hay una asignatura
+            if (horarioCombinado.tabla[dia][hora] !== '') { // Si ya había una asignatura de otro curso a esa hora
+              horarioCombinado.haySolapamiento = true; // Señalamos el solapamiento
+              horarioCombinado.tabla[dia][hora] += `/${asignatura}`; // La hora queda con el valor "ASIG1/ASIG2"
+            } else {
+              horarioCombinado.tabla[dia][hora] = asignatura;
+            }
+          }
+        });
+      });
+    });
+
+    horariosCombinados.push(horarioCombinado);
+  });
 
   next();
 };
