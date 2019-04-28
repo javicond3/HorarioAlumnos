@@ -126,20 +126,13 @@ const calcCombinaciones = (horario) => {
   return cartesian(arrDeArrays);
 };
 
-// POST /planificador_2
-exports.generarHorarios = (req, res, next) => {
-  // JSON con las asignaturas (y sus detalles, incluyendo horarios)
-  // recibido de la API en el middleware anterior.
-  const asignaturas = res.locals.asigConHorario;
-
-  // Objeto en el que guardamos la información de la API
-  // con una estructura más manejable para pasos posteriores
-  const horariosPorCurso = formatearHorarios(asignaturas);
-
-  // Array con todas las combinaciones posibles de grupos
-  const combGrupos = calcCombinaciones(horariosPorCurso);
-
-  // Array con todos los horarios resultantes de las combinaciones
+/**
+ * Función que un array con combinaciones de grupos y un objeto con los horarios fromateados
+ * y devuleve un array de objetos con los horarios resultantes de combinar el de los grupos
+ * pasados como parámetro.
+ *
+ */
+const generarHorariosCombinados = (combGrupos, horariosPorCurso) => {
   const horariosCombinados = [];
 
   // Para cada combinación de grupos generamos un horario
@@ -155,7 +148,7 @@ exports.generarHorarios = (req, res, next) => {
       const horarioGrupo = horariosPorCurso[curso][grupo];
       Object.keys(horarioGrupo).forEach((dia) => {
         const horarioDia = horarioGrupo[dia];
-        Object.keys(horarioDia).forEach((hora, index) => {
+        Object.keys(horarioDia).forEach((hora) => {
           const asignatura = horarioDia[hora];
 
           if (asignatura !== '') { // Si a esa hora hay una asignatura
@@ -172,6 +165,25 @@ exports.generarHorarios = (req, res, next) => {
 
     horariosCombinados.push(horarioCombinado);
   });
+
+  return horariosCombinados;
+};
+
+// POST /planificador_2
+exports.generarHorarios = (req, res, next) => {
+  // JSON con las asignaturas (y sus detalles, incluyendo horarios)
+  // recibido de la API en el middleware anterior.
+  const asignaturas = res.locals.asigConHorario;
+
+  // Objeto en el que guardamos la información de la API
+  // con una estructura más manejable para pasos posteriores
+  const horariosPorCurso = formatearHorarios(asignaturas);
+
+  // Array con todas las combinaciones posibles de grupos
+  const combGrupos = calcCombinaciones(horariosPorCurso);
+
+  // Array con todos los horarios resultantes de las combinaciones
+  const horariosCombinados = generarHorariosCombinados(combGrupos, horariosPorCurso);
 
   next();
 };
