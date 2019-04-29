@@ -32,7 +32,6 @@ const generaDiasConHoras = () => {
     '18': '',
     '19': '',
     '20': '',
-    '21': '',
   };
 
   // Rellenamos los dias con las horas
@@ -184,6 +183,8 @@ exports.generarHorarios = (req, res, next) => {
 
   // Array con todos los horarios resultantes de las combinaciones
   const horariosCombinados = generarHorariosCombinados(combGrupos, horariosPorCurso);
+
+  res.locals.horarios = horariosCombinados;
 
   next();
 };

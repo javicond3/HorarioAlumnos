@@ -21,6 +21,12 @@ main > div > .row {
   display: none;
 }
 
+/* En el planificador, las tablas de los horarios deben permancer ocultas
+ * (hasta que sean seleccionadas) */
+.horarioPosible{
+  display: none;
+}
+
 footer {
   position: absolute;
   bottom: 0;

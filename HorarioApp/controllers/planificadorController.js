@@ -1,7 +1,7 @@
 // GET /planificador
 exports.planificador = (req, res) => {
   // Scripts que se incluyen en la vista para el lado cliente
-  const scripts = ['tablaAsignaturas'];
+  const scripts = ['seleccionAsignaturas'];
 
   // Es redundante pasar como parámetro locals de res.render()
   // un res.locals.x, porque en la vista ya se podría acceder
@@ -21,8 +21,11 @@ exports.planificador = (req, res) => {
 // POST /planificador_2
 exports.planificador_2 = (req, res) => {
   // Scripts que se incluyen en la vista para el lado cliente
-  // const scripts = [''];
-  res.render('planificador/planificador_2', { scripts: '' });
+  const scripts = ['seleccionHorario'];
+
+  // Los horarios ya se han guardado en res.locals.horarios en el mw anterior
+
+  res.render('planificador/planificador_2', { scripts });
 };
 
 // GET /planificador_3
