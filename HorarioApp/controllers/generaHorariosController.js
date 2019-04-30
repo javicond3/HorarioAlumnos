@@ -135,8 +135,9 @@ const generarHorariosCombinados = (combGrupos, horariosPorCurso) => {
   const horariosCombinados = [];
 
   // Para cada combinación de grupos generamos un horario
-  combGrupos.forEach((comb) => {
+  combGrupos.forEach((comb, ind) => {
     const horarioCombinado = {
+      id: ind, // Id única para cada horario
       grupos: comb, // Grupos que forman el horario
       haySolapamiento: false, // Indica si hay solapamiento de asignaturas
       tabla: generaDiasConHoras(), // Tabla para representarlo en la vista

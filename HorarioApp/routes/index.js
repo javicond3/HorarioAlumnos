@@ -28,7 +28,6 @@ router.post('/planificador_2',
   getHorariosController.getHorarios,
   generaHorariosController.generarHorarios,
   planificadorController.planificador_2);
-router.get('/planificador_3', planificadorController.planificador_3);
 
 /* Rutas de horarios guardados. */
 router.get('/horarios_guardados', horariosGuardadosController.horarios);

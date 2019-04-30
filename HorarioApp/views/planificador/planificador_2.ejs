@@ -9,18 +9,40 @@
                 <label for="optionSelector">Elige una combinación de grupos para mostrar su horario</label>
                 <select class="form-control" id="optionSelector">
                     <option value="" selected disabled hidden>Selecciona grupos</option>
+
                     <% if (horarios) { %>
-                    <% horarios.forEach((horario, index) => { %>
-                    <option value="<%= index %>">
-                        <%= horario.grupos.reduce((acc, ele, index) => { 
-                            if (index === 0) {
-                                return acc += ele;
-                            } else {
-                                return acc += `, ${ele}`;
-                            }
-                        }, '') %>
-                    </option>
-                    <% }); %>
+                    <optgroup label="Sin solapamientos">
+                        <% horarios.forEach((horario) => { %>
+                        <% if (!horario.haySolapamiento) { %>
+                        <option value="<%= horario.id %>">
+                            <%= horario.grupos.reduce((acc, ele, index) => { 
+                                        if (index === 0) {
+                                            return acc += ele;
+                                        } else {
+                                            return acc += `, ${ele}`;
+                                        }
+                                    }, '') %>
+                        </option>
+                        <% } %>
+                        <% }); %>
+                    </optgroup>
+
+                    <optgroup label="Con solapamientos">
+                        <% horarios.forEach((horario) => { %>
+                        <% if (horario.haySolapamiento) { %>
+                        <option value="<%= horario.id %>">
+                            <%= horario.grupos.reduce((acc, ele, index) => { 
+                                            if (index === 0) {
+                                                return acc += ele;
+                                            } else {
+                                                return acc += `, ${ele}`;
+                                            }
+                                        }, '') %>
+                        </option>
+                        <% } %>
+                        <% }); %>
+                    </optgroup>
+
                     <% } %>
                 </select>
             </div>
@@ -44,8 +66,8 @@
 
     <div id="content" class="col-md-9">
         <% if (horarios) { %>
-        <% horarios.forEach((horario, index) => { %>
-        <table class="table table-bordered table-sm horarioPosible" id="tabla<%= index %>">
+        <% horarios.forEach((horario) => { %>
+        <table class="table table-bordered table-sm horarioPosible" id="tabla<%= horario.id %>">
             <thead class="thead-light">
                 <tr>
                     <th scope="col">Hora</th>
@@ -168,7 +190,7 @@
 
         <div id="botones">
             <a class="btn btn-secondary" href="/planificador" role="button">Atrás</a>
-            <a class="btn btn-primary" href="/planificador_3" role="button">Mostrar 2º semestre</a>
+            <button class="btn btn-primary" type="submit">Guardar horario</button>
         </div>
 
     </div>
