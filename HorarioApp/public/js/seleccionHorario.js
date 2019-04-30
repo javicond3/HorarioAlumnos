@@ -9,4 +9,11 @@ $(document).ready(() => {
     $('.horarioPosible').hide(); // Escondemos todas
     $(`#tabla${this.value}`).show(); // Mostramos la elegida
   });
+
+  // Añade la clase "solapado" a las casillas en las que coinciden varias asignaturas
+  $('.horarioPosible tbody tr td').each(function () {
+    if ($(this).text().includes('/')) {
+      $(this).addClass('solapado');
+    }
+  });
 });
