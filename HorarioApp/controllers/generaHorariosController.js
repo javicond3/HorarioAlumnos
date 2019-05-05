@@ -55,25 +55,35 @@ const formatearHorarios = (asignaturas) => {
   Object.keys(asignaturas).forEach((codigoAsig) => {
     const asignatura = asignaturas[codigoAsig];
 
+    // Si la asignatura es optativa (tiene grupos con nombre "Optativasx.x")
+    let esOptativa = false;
+    const primerGrupo = Object.keys(asignatura.grupos)[0];
+    if (primerGrupo.includes('Optativa')) {
+      esOptativa = true;
+      asignatura.curso = `Opt${asignatura.acronimo}`; // Le asignamos un curso separado llamado "OptACRONIMO"
+    }
+
     // Si el curso al que pertenece esta asignatura no está en el objeto, se añade
     if (!horariosPorCurso.hasOwnProperty(asignatura.curso)) {
       horariosPorCurso[asignatura.curso] = {};
     }
 
-    Object.keys(asignatura.grupos).forEach((numeroGrupo) => {
-      const grupo = asignatura.grupos[numeroGrupo];
+    Object.keys(asignatura.grupos).forEach((nombGrupo, ind) => {
+      const grupo = asignatura.grupos[nombGrupo];
+      // Variable con el nombre del grupo que modificaremos si es optativa. Ej: "HCOV-1".
+      const nombreGrupo = esOptativa ? `${asignatura.acronimo}-${ind}` : nombGrupo;
 
       // Si el grupo en el que se imparte esta asignatura no está en el objeto, se añade
       // Además se le añaden los días (que ya llevan las horas)
-      if (!horariosPorCurso[asignatura.curso].hasOwnProperty(numeroGrupo)) {
+      if (!horariosPorCurso[asignatura.curso].hasOwnProperty(nombreGrupo)) {
         // Añadimos un objeto días con horas a cada curso
-        horariosPorCurso[asignatura.curso][numeroGrupo] = generaDiasConHoras();
+        horariosPorCurso[asignatura.curso][nombreGrupo] = generaDiasConHoras();
       }
 
       grupo.horario.forEach((clase) => {
         const hora = clase.hora.substring(0, 2);
 
-        horariosPorCurso[asignatura.curso][numeroGrupo][clase.dia][hora] = asignatura.acronimo;
+        horariosPorCurso[asignatura.curso][nombreGrupo][clase.dia][hora] = asignatura.acronimo;
       });
     });
   });
@@ -104,25 +114,36 @@ const cartesian = (arrDeArrays) => {
 };
 
 /**
- * Función que recibe un horario ya formateado y devuelve un array con todas
- * las combinaciones usando la función cartesian().
+ * Función que recibe un horario ya formateado y devuelve un objeto con dos propiedades:
+ * una con un array con los cursos de las asignaturas seleccionadas y otra con un array que
+ * contiene todas las combinaciones posibles con los grupos de esos cursos.
  *
  */
 const calcCombinaciones = (horario) => {
-  const arrDeArrays = []; // Array con los arrays de grupos de cada curso
+  const combinaciones = {
+    cursos: [], // Cursos a los que pertencen los grupos a combinar
+    combGrupos: [], // Combinaciones de grupos
+  };
 
-  Object.keys(horario).forEach((numCurso) => {
-    const curso = horario[numCurso];
+  // Array con arrays, en el que cada uno contiene los grupos de un curso
+  // Por ejemplo: [[11.1,12.1],[21.1,22.1],[31.1,32.1]]
+  const arrGrupos = [];
+
+  Object.keys(horario).forEach((nombreCurso) => {
+    combinaciones.cursos.push(nombreCurso);
+    const curso = horario[nombreCurso];
     const gruposDeCurso = []; // Cada curso tiene unos grupos
 
     Object.keys(curso).forEach((numGrupo) => {
       gruposDeCurso.push(numGrupo);
     });
 
-    arrDeArrays.push(gruposDeCurso);
+    arrGrupos.push(gruposDeCurso);
   });
 
-  return cartesian(arrDeArrays);
+  combinaciones.combGrupos = cartesian(arrGrupos);
+
+  return combinaciones;
 };
 
 /**
@@ -131,8 +152,9 @@ const calcCombinaciones = (horario) => {
  * pasados como parámetro.
  *
  */
-const generarHorariosCombinados = (combGrupos, horariosPorCurso) => {
+const generarHorariosCombinados = (combinaciones, horariosPorCurso) => {
   const horariosCombinados = [];
+  const { combGrupos } = combinaciones;
 
   // Para cada combinación de grupos generamos un horario
   combGrupos.forEach((comb, ind) => {
@@ -143,8 +165,8 @@ const generarHorariosCombinados = (combGrupos, horariosPorCurso) => {
       tabla: generaDiasConHoras(), // Tabla para representarlo en la vista
     };
 
-    comb.forEach((grupo) => {
-      const curso = grupo.charAt(0); // El primer caracter del grupo es el curso
+    comb.forEach((grupo, index) => {
+      const curso = combinaciones.cursos[index]; // El primer caracter del grupo es el curso
       const horarioGrupo = horariosPorCurso[curso][grupo];
       Object.keys(horarioGrupo).forEach((dia) => {
         const horarioDia = horarioGrupo[dia];
@@ -179,11 +201,11 @@ exports.generarHorarios = (req, res, next) => {
   // con una estructura más manejable para pasos posteriores
   const horariosPorCurso = formatearHorarios(asignaturas);
 
-  // Array con todas las combinaciones posibles de grupos
-  const combGrupos = calcCombinaciones(horariosPorCurso);
+  // Objeto con los cursos y todas las combinaciones posibles de grupos
+  const combinaciones = calcCombinaciones(horariosPorCurso);
 
   // Array con todos los horarios resultantes de las combinaciones
-  const horariosCombinados = generarHorariosCombinados(combGrupos, horariosPorCurso);
+  const horariosCombinados = generarHorariosCombinados(combinaciones, horariosPorCurso);
 
   res.locals.horarios = horariosCombinados;
 

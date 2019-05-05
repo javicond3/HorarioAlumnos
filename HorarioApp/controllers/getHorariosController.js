@@ -24,6 +24,8 @@ exports.getHorarios = (req, res, next) => {
     .then(respuesta => respuesta.json())
     .then((json) => {
       res.locals.asigConHorario = json;
+      console.log(json);
+
       next();
     })
     .catch(err => console.error(err));
