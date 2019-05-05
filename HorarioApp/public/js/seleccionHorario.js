@@ -7,11 +7,11 @@
 $(document).ready(() => {
   $('#optionSelector').change(function () { // Cuando cambie el valor
     $('.horarioPosible').hide(); // Escondemos todas
-    $(`#tabla${this.value}`).show(); // Mostramos la elegida
+    $(`#horario${this.value}`).show(); // Mostramos la elegida
   });
 
   // Añade la clase "solapado" a las casillas en las que coinciden varias asignaturas
-  $('.horarioPosible tbody tr td').each(function () {
+  $('.horarioPosible table tbody tr td').each(function () {
     if ($(this).text().includes('/')) {
       $(this).addClass('solapado');
     }

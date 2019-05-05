@@ -24,7 +24,10 @@ exports.getHorarios = (req, res, next) => {
     .then(respuesta => respuesta.json())
     .then((json) => {
       res.locals.asigConHorario = json;
-      console.log(json);
+      // console.log(json);
+      // Object.keys(json).forEach((curso) => {
+      // console.log(json[curso].grupos);
+      // });
 
       next();
     })

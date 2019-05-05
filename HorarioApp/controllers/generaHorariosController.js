@@ -70,20 +70,32 @@ const formatearHorarios = (asignaturas) => {
 
     Object.keys(asignatura.grupos).forEach((nombGrupo, ind) => {
       const grupo = asignatura.grupos[nombGrupo];
+
       // Variable con el nombre del grupo que modificaremos si es optativa. Ej: "HCOV-1".
-      const nombreGrupo = esOptativa ? `${asignatura.acronimo}-${ind}` : nombGrupo;
+      const nombreGrupo = esOptativa ? `${asignatura.acronimo}-${ind + 1}` : nombGrupo;
 
       // Si el grupo en el que se imparte esta asignatura no está en el objeto, se añade
-      // Además se le añaden los días (que ya llevan las horas)
+      // Además se le añade el horario (con días y horas) y las notas
       if (!horariosPorCurso[asignatura.curso].hasOwnProperty(nombreGrupo)) {
-        // Añadimos un objeto días con horas a cada curso
-        horariosPorCurso[asignatura.curso][nombreGrupo] = generaDiasConHoras();
+        horariosPorCurso[asignatura.curso][nombreGrupo] = {};
+        horariosPorCurso[asignatura.curso][nombreGrupo].horario = generaDiasConHoras();
+        horariosPorCurso[asignatura.curso][nombreGrupo].notas = {};
       }
 
+      // Añadimos al objeto las clases
       grupo.horario.forEach((clase) => {
         const hora = clase.hora.substring(0, 2);
 
-        horariosPorCurso[asignatura.curso][nombreGrupo][clase.dia][hora] = asignatura.acronimo;
+        horariosPorCurso[asignatura.curso][nombreGrupo].horario[clase.dia][hora] = asignatura.acronimo;
+      });
+
+      // Añadimos al objeto las notas
+      grupo.nota.forEach((nota) => {
+        // Si la asignatura a la que pertenece esta nota no está en el objeto, se añade
+        if (!horariosPorCurso[asignatura.curso][nombreGrupo].notas.hasOwnProperty(asignatura.acronimo)) {
+          horariosPorCurso[asignatura.curso][nombreGrupo].notas[asignatura.acronimo] = [];
+        }
+        horariosPorCurso[asignatura.curso][nombreGrupo].notas[asignatura.acronimo].push(nota);
       });
     });
   });
@@ -163,11 +175,29 @@ const generarHorariosCombinados = (combinaciones, horariosPorCurso) => {
       grupos: comb, // Grupos que forman el horario
       haySolapamiento: false, // Indica si hay solapamiento de asignaturas
       tabla: generaDiasConHoras(), // Tabla para representarlo en la vista
+      notas: {}, // Observaciones
     };
 
     comb.forEach((grupo, index) => {
-      const curso = combinaciones.cursos[index]; // El primer caracter del grupo es el curso
-      const horarioGrupo = horariosPorCurso[curso][grupo];
+      // El array de cursos tiene el mismo orden que las combinaciones, por lo que el índice
+      // del curso y del grupo correspondiente a ese curso es el mismo [1,2,3] [11.1, 23.1, 32.1]
+      const curso = combinaciones.cursos[index];
+      const notasGrupo = horariosPorCurso[curso][grupo].notas;
+      const horarioGrupo = horariosPorCurso[curso][grupo].horario;
+
+      // Añadimos las notas al horario combinado
+      Object.keys(notasGrupo).forEach((nomAsig) => {
+        const notasAsignatura = notasGrupo[nomAsig];
+
+        // Creamos la propiedad <nomAsig> dentro de notas, donde
+        // guardaremos un array con las notas de dicha asignatura
+        horarioCombinado.notas[nomAsig] = [];
+        notasAsignatura.forEach((nota) => {
+          horarioCombinado.notas[nomAsig].push(nota);
+        });
+      });
+
+      // Añadimos las clases al horario combinado
       Object.keys(horarioGrupo).forEach((dia) => {
         const horarioDia = horarioGrupo[dia];
         Object.keys(horarioDia).forEach((hora) => {
@@ -200,6 +230,9 @@ exports.generarHorarios = (req, res, next) => {
   // Objeto en el que guardamos la información de la API
   // con una estructura más manejable para pasos posteriores
   const horariosPorCurso = formatearHorarios(asignaturas);
+
+  console.log(horariosPorCurso);
+
 
   // Objeto con los cursos y todas las combinaciones posibles de grupos
   const combinaciones = calcCombinaciones(horariosPorCurso);
