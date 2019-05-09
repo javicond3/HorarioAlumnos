@@ -9,6 +9,7 @@ const filtroController = require('../controllers/filtroController');
 const getHorariosController = require('../controllers/getHorariosController');
 const generaHorariosController = require('../controllers/generaHorariosController');
 const getExamenesController = require('../controllers/getExamenesController');
+const getPlanesController = require('../controllers/getPlanesController');
 
 /* GET home page.
 (redirige a curso_actual/horario) */
@@ -23,7 +24,9 @@ router.get('/curso_actual/examenes',
   cursoActualController.examenes);
 
 /* Rutas de planificador. */
-router.get('/planificador', planificadorController.planificador);
+router.get('/planificador',
+  getPlanesController.getPlanes,
+  planificadorController.planificador);
 router.get('/filtrar', // Ruta para el filtro del planificador
   filtroController.filtrarAsignaturas,
   planificadorController.planificador);
