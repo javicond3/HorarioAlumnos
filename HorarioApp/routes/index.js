@@ -2,14 +2,14 @@ const express = require('express');
 
 const router = express.Router();
 
-const cursoActualController = require('../controllers/cursoActualController');
-const planificadorController = require('../controllers/planificadorController');
-const horariosGuardadosController = require('../controllers/horariosGuradadosController');
-const filtroController = require('../controllers/filtroController');
-const getHorariosController = require('../controllers/getHorariosController');
-const getExamenesController = require('../controllers/getExamenesController');
-const getPlanesController = require('../controllers/getPlanesController');
-const getHorarioActualController = require('../controllers/getHorarioActualController');
+const cursoActualController = require('../controllers/curso_actual/cursoActualController');
+const planificadorController = require('../controllers/planificador/planificadorController');
+const horariosGuardadosController = require('../controllers/horarios_guardados/horariosGuradadosController');
+const filtroController = require('../controllers/planificador/filtroController');
+const getHorariosController = require('../controllers/planificador/getHorariosController');
+const getExamenesController = require('../controllers/curso_actual/getExamenesController');
+const getPlanesController = require('../controllers/planificador/getPlanesController');
+const getHorarioActualController = require('../controllers/curso_actual/getHorarioActualController');
 
 /* GET home page.
 (redirige a curso_actual/horario) */
