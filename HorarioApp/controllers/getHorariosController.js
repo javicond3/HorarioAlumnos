@@ -8,11 +8,7 @@ exports.getHorarios = (req, res, next) => {
   const { ano } = req.body;
   const { semestre } = req.body;
 
-  let listaAsignaturas = '';
-
-  asignaturas.forEach((asig) => {
-    listaAsignaturas += `${asig},`;
-  });
+  const listaAsignaturas = asignaturas.reduce((acc, asig) => `${acc},${asig}`);
 
   // URL para pedir el JSON con las asignaturas deseadas
   // https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/09TT/201718/I/95000001/horarios

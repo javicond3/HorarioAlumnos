@@ -43,8 +43,8 @@ const generaDiasConHoras = () => {
 };
 
 /**
- * Función que toma un JSON con las asignaturas tal cual se obtiene de la API
- * y devuelve un objeto con la información reorganizada en una estructura de
+ * Función que toma un objeto con las asignaturas tal cual se obtiene el JSON de
+ * la API y devuelve un objeto con la información reorganizada en una estructura de
  * {cursos : {grupos: {días: {horas:acronimo}}} para que sea más fácil de manejar
  * a la hora de hacer combinaciones posteriormente.
  */
@@ -230,9 +230,6 @@ exports.generarHorarios = (req, res, next) => {
   // Objeto en el que guardamos la información de la API
   // con una estructura más manejable para pasos posteriores
   const horariosPorCurso = formatearHorarios(asignaturas);
-
-  console.log(horariosPorCurso);
-
 
   // Objeto con los cursos y todas las combinaciones posibles de grupos
   const combinaciones = calcCombinaciones(horariosPorCurso);

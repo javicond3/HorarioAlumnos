@@ -8,6 +8,7 @@ const horariosGuardadosController = require('../controllers/horariosGuradadosCon
 const filtroController = require('../controllers/filtroController');
 const getHorariosController = require('../controllers/getHorariosController');
 const generaHorariosController = require('../controllers/generaHorariosController');
+const getExamenesController = require('../controllers/getExamenesController');
 
 /* GET home page.
 (redirige a curso_actual/horario) */
@@ -17,7 +18,9 @@ router.get('/', (req, res) => {
 
 /* Rutas de curso actual. */
 router.get('/curso_actual/horario', cursoActualController.horario);
-router.get('/curso_actual/examenes', cursoActualController.examenes);
+router.get('/curso_actual/examenes',
+  getExamenesController.getExamenes,
+  cursoActualController.examenes);
 
 /* Rutas de planificador. */
 router.get('/planificador', planificadorController.planificador);
