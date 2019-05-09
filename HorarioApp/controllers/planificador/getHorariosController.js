@@ -91,7 +91,7 @@ const formatearHorarios = (asignaturas) => {
     // Si la asignatura es optativa (tiene grupos con nombre "Optativasx.x")
     let esOptativa = false;
     const primerGrupo = Object.keys(asignatura.grupos)[0];
-    if (primerGrupo.includes('Optativa')) {
+    if (primerGrupo && primerGrupo.includes('Optativa')) { // La optativa tiene que tener grupos (no vacío) e incluir "Optativa"
       esOptativa = true;
       asignatura.curso = `Opt${asignatura.acronimo}`; // Le asignamos un curso separado llamado "OptACRONIMO"
     }
@@ -263,6 +263,8 @@ exports.generarHorarios = (req, res, next) => {
   // Objeto en el que guardamos la información de la API
   // con una estructura más manejable para pasos posteriores
   const horariosPorCurso = formatearHorarios(asignaturas);
+  console.log(horariosPorCurso);
+
 
   // Objeto con los cursos y todas las combinaciones posibles de grupos
   const combinaciones = calcCombinaciones(horariosPorCurso);

@@ -1,3 +1,5 @@
+/* eslint-disable no-prototype-builtins */
+
 const fetch = require('node-fetch');
 
 // GET /curso_actual/horario
