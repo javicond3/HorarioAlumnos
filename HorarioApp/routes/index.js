@@ -7,7 +7,6 @@ const planificadorController = require('../controllers/planificadorController');
 const horariosGuardadosController = require('../controllers/horariosGuradadosController');
 const filtroController = require('../controllers/filtroController');
 const getHorariosController = require('../controllers/getHorariosController');
-const generaHorariosController = require('../controllers/generaHorariosController');
 const getExamenesController = require('../controllers/getExamenesController');
 const getPlanesController = require('../controllers/getPlanesController');
 const getHorarioActualController = require('../controllers/getHorarioActualController');
@@ -32,11 +31,12 @@ router.get('/planificador',
   getPlanesController.getPlanes,
   planificadorController.planificador);
 router.get('/filtrar', // Ruta para el filtro del planificador
+  getPlanesController.getPlanes,
   filtroController.filtrarAsignaturas,
   planificadorController.planificador);
 router.post('/planificador_2',
   getHorariosController.getHorarios,
-  generaHorariosController.generarHorarios,
+  getHorariosController.generarHorarios,
   planificadorController.planificador_2);
 
 /* Rutas de horarios guardados. */
