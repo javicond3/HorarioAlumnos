@@ -16,7 +16,7 @@ const formatearExamenes = (asigConExamenes) => {
       const periodo = asig.examenesPeriodos[nomPeriodo];
       periodo.examenes.forEach((exam) => {
         const examen = {
-          asignatura: asig.acronimo,
+          asignatura: asig.acronimo ? asig.acronimo : asig.nombre,
           fecha: exam.fecha,
           hora: exam.hora,
           duracion: exam.duracion,
