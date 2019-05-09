@@ -10,6 +10,7 @@ const getHorariosController = require('../controllers/getHorariosController');
 const generaHorariosController = require('../controllers/generaHorariosController');
 const getExamenesController = require('../controllers/getExamenesController');
 const getPlanesController = require('../controllers/getPlanesController');
+const getHorarioActualController = require('../controllers/getHorarioActualController');
 
 /* GET home page.
 (redirige a curso_actual/horario) */
@@ -18,7 +19,10 @@ router.get('/', (req, res) => {
 });
 
 /* Rutas de curso actual. */
-router.get('/curso_actual/horario', cursoActualController.horario);
+router.get('/curso_actual/horario',
+  getHorarioActualController.getHorarios,
+  getHorarioActualController.generaHorario,
+  cursoActualController.horario);
 router.get('/curso_actual/examenes',
   getExamenesController.getExamenes,
   cursoActualController.examenes);
