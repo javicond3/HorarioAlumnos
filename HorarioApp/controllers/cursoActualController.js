@@ -39,6 +39,25 @@ const formatearExamenes = (asigConExamenes) => {
   return examenes;
 };
 
+/**
+ * Función que toma un objeto con los exámenes formateados y los ordena
+ * por fecha (más recientes primero).
+ *
+ * No devuelve un nuevo objeto, solo ordena el pasado como parámetro.
+ */
+const ordenarExamPorFecha = (examenes) => {
+  examenes.ordinaria.sort((a, b) => {
+    const dateA = new Date(a.fecha);
+    const dateB = new Date(b.fecha);
+    return dateA - dateB;
+  });
+  examenes.extraordinaria.sort((a, b) => {
+    const dateA = new Date(a.fecha);
+    const dateB = new Date(b.fecha);
+    return dateA - dateB;
+  });
+};
+
 // GET /curso_actual/horario
 exports.horario = (req, res) => {
   res.render('curso_actual/horario', { scripts: '' });
@@ -48,8 +67,7 @@ exports.horario = (req, res) => {
 exports.examenes = (req, res) => {
   const { asigConExamenes } = res.locals;
   const examenes = formatearExamenes(asigConExamenes);
-  console.log(examenes);
-
+  ordenarExamPorFecha(examenes);
 
   res.render('curso_actual/examenes', { examenes, scripts: '' });
 };
