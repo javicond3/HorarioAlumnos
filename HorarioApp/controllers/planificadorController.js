@@ -11,7 +11,7 @@ exports.planificador = (req, res) => {
   // se podría evitar eso poniendo locals.x en las vistas.
   res.render('planificador/planificador', {
     asignaturas: res.locals.asignaturas,
-    grado: res.locals.grado,
+    plan: res.locals.plan,
     ano: res.locals.ano,
     semestre: res.locals.semestre,
     scripts,

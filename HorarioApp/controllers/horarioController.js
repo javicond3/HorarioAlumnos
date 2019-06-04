@@ -2,22 +2,30 @@
 /* eslint-disable quote-props */
 
 const fetch = require('node-fetch');
+const Sequelize = require('sequelize');
+const models = require('../models');
 
 // POST /planificador_2
-exports.getHorarios = (req, res, next) => {
-  // Array con los códigos de las asignaturas seleccionadas
-  const asignaturas = JSON.parse(req.body.asigSelec);
-  const { grado } = req.body;
+exports.fetch = (req, res, next) => {
+  // Parámetros del formulario oculto
+  const asignaturas = JSON.parse(req.body.asigSelec); // Array con códigos de asignaturas selec.
+  const { plan } = req.body;
   const { ano } = req.body;
   const { semestre } = req.body;
+
+  // Guardamos en locals los datos que necesitamos tener accesibles en las vistas
+  res.locals.ano = ano;
+  res.locals.semestre = semestre;
+  res.locals.plan = plan;
+  res.locals.asignaturas = req.body.asigSelec;
 
   const listaAsignaturas = asignaturas.reduce((acc, asig) => `${acc},${asig}`);
 
   // URL para pedir el JSON con las asignaturas deseadas
   // https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/09TT/201718/I/95000001/horarios
 
-  // const url = `https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/${grado}/${ano}/${semestre}/${listaAsignaturas}/horarios`;
-  const url = `https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/${grado}/201718/${semestre}/${listaAsignaturas}/horarios`;
+  // const url = `https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/${plan}/${ano}/${semestre}/${listaAsignaturas}/horarios`;
+  const url = `https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/${plan}/201718/${semestre}/${listaAsignaturas}/horarios`;
 
   fetch(url)
     .then(respuesta => respuesta.json())
@@ -255,7 +263,7 @@ const generarHorariosCombinados = (combinaciones, horariosPorCurso) => {
 };
 
 // POST /planificador_2
-exports.generarHorarios = (req, res, next) => {
+exports.combinar = (req, res, next) => {
   // JSON con las asignaturas (y sus detalles, incluyendo horarios)
   // recibido de la API en el middleware anterior.
   const asignaturas = res.locals.asigConHorario;
@@ -263,7 +271,7 @@ exports.generarHorarios = (req, res, next) => {
   // Objeto en el que guardamos la información de la API
   // con una estructura más manejable para pasos posteriores
   const horariosPorCurso = formatearHorarios(asignaturas);
-  console.log(horariosPorCurso);
+  // console.log(horariosPorCurso);
 
 
   // Objeto con los cursos y todas las combinaciones posibles de grupos
@@ -275,4 +283,128 @@ exports.generarHorarios = (req, res, next) => {
   res.locals.horarios = horariosCombinados;
 
   next();
+};
+
+// POST /planificador_2
+exports.guardar = (req, res, next) => {
+  // Parámetros del formulario oculto
+  const { ano } = req.body;
+  const { semestre } = req.body;
+  const { plan } = req.body;
+  const asignaturas = JSON.parse(req.body.asignaturas); // Array con códigos de asignaturas selec.
+  const grupos = JSON.parse(req.body.grupos);
+
+  /* // Recuperamos el plan al que corresponde el horario de la BBDD
+    let planBuscado;
+    models.Plan.findAll({ where: { codigo: plan } })
+    .then((planes) => {
+      planBuscado = planes[0];
+    }); */
+
+  // Crea un objeto compatible con la tabla Horario
+  const horario = models.Horario.build({
+    ano,
+    semestre,
+    asignaturas,
+    grupos,
+    planId: plan,
+  });
+
+  // Guarda en la BBDD los campos del objeto
+  horario.save()
+    .then(() => {
+      res.locals.msg = 'Horario guardado con éxito.';
+      res.locals.saved = true;
+      next();
+    })
+    .catch(Sequelize.ValidationError, (error) => {
+      console.log('Error de validación, los datos del horario no son correctos.');
+      error.errors.forEach((elem) => {
+        console.log(error.errors[elem].value);
+      });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.locals.msg = 'Error. No se ha podido guardar el horario';
+      res.locals.saved = false;
+      next();
+    });
+};
+
+
+/**
+ * Función que genera un horario tomando como parámetros las asignaturas y los
+ * grupos en los que está matriculado el alumno.
+ */
+const generaHorarioActual = (asignaturas, gruposMatriculado) => {
+  const horarioCombinado = {
+    tabla: generaDiasConHoras(), // Tabla para representarlo en la vista
+    notas: {}, // Observaciones
+  };
+
+  Object.keys(asignaturas).forEach((codigoAsig) => {
+    const asig = asignaturas[codigoAsig];
+    const nombreAsig = asig.acronimo ? asig.acronimo : asig.nombre;
+    const grupMatriculado = gruposMatriculado[asig.curso];
+
+    asig.grupos[grupMatriculado].horario.forEach((clase) => {
+      const { dia } = clase;
+      const hora = clase.hora.substring(0, 2);
+      if (horarioCombinado.tabla[dia][hora] !== '') { // Si ya había una asignatura de otro curso a esa hora
+        horarioCombinado.tabla[dia][hora] += `/${nombreAsig}`; // La hora queda con el valor "ASIG1/ASIG2"
+      } else {
+        horarioCombinado.tabla[dia][hora] = nombreAsig;
+      }
+    });
+
+    // Añadimos al objeto las notas
+    asig.grupos[grupMatriculado].nota.forEach((nota) => {
+      // Si la asignatura a la que pertenece esta nota no está en el objeto, se añade
+      if (!horarioCombinado.notas.hasOwnProperty(nombreAsig)) {
+        horarioCombinado.notas[nombreAsig] = [];
+      }
+      horarioCombinado.notas[nombreAsig].push(nota);
+    });
+  });
+
+  return horarioCombinado;
+};
+
+// GET /curso_actual/horario
+exports.getActual = (req, res, next) => {
+  // Cuando la API esté disponible, obtener los datos de matírcula del alumno que ha iniciado sesión
+
+  // const gruposMatriculado = grupos;
+
+  // Datos de prueba
+  const gruposMatriculado = {
+    1: '12.1',
+    2: '23.1',
+  };
+  const asigPrueba = ['95000001', '95000002', '95000013', '95000011'];
+  const listaAsignaturas = asigPrueba.reduce((acc, asig) => `${acc},${asig}`);
+  const grado = '09TT';
+  const ano = '201718';
+  const semestre = '1S';
+
+  const url = `https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/${grado}/${ano}/${semestre}/${listaAsignaturas}/horarios`;
+
+  fetch(url)
+    .then(respuesta => respuesta.json())
+    .then((json) => {
+      const asigConHorario = json;
+      res.locals.horario = generaHorarioActual(asigConHorario, gruposMatriculado);
+      next();
+    })
+    .catch(err => console.error(err));
+};
+
+
+// GET /horarios_guardados
+exports.cargar = (req, res, next) => {
+  // revisar que todo va bien
+  // cargar horarios (todos) de la BBDD
+  // Hacer la vista
+  // Cargarlos todos (ocultos)
+  // Seleccionar con js
 };

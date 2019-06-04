@@ -6,11 +6,11 @@
             <h4>Filtros</h4>
             <form method="GET" action="/filtrar">
                 <div class="form-group">
-                    <label for="grado">Grado</label>
-                    <select class="form-control" id="grado" name="grado">
-                        <% if (planes) { %>
-                        <% Object.keys(planes).forEach((nomPlan) => { 
-                            const plan = planes[nomPlan];
+                    <label for="plan">Plan de estudios</label>
+                    <select class="form-control" id="plan" name="plan">
+                        <% if (listaPlanes) { %>
+                        <% Object.keys(listaPlanes).forEach((nomPlan) => { 
+                            const plan = listaPlanes[nomPlan];
                             %>
                         <option value="<%= plan.codigo %>"><%= plan.nombreCompleto %></option>
                         <% }); %>
@@ -165,7 +165,7 @@
             <button class="btn btn-danger" type="delete"> Borrar todo</button>
             <form id="asigForm" class="d-inline" method="POST" action="/planificador_2">
                 <input type="hidden" name="asigSelec" value="">
-                <input type="hidden" name="grado" value="<%= grado %>">
+                <input type="hidden" name="plan" value="<%= plan %>">
                 <input type="hidden" name="ano" value="<%= ano %>">
                 <input type="hidden" name="semestre" value="<%= semestre %>">
                 <button class="btn btn-primary" type="submit" id="confirmar"> Confirmar</button>

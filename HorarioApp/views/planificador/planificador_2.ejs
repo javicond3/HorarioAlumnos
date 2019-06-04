@@ -201,15 +201,21 @@
                 <%  }); %>
             </div>
 
+            <div id="botones">
+                <a class="btn btn-secondary" href="/planificador" role="button">Atrás</a>
+                <form id="guardarHorarioForm" class="d-inline" method="POST" action="/guardarHorario">
+                    <input type="hidden" name="ano" value="<%= ano %>">
+                    <input type="hidden" name="semestre" value="<%= semestre %>">
+                    <input type="hidden" name="plan" value="<%= plan %>">
+                    <input type="hidden" name="asignaturas" value="<%= asignaturas %>">
+                    <input type="hidden" name="grupos" value="<%= JSON.stringify(horario.grupos) %>">
+                    <button class="btn btn-primary" type="submit">Guardar horario</button>
+                </form>
+            </div>
+
         </div>
         <% }); %>
         <% } %>
-
-
-        <div id="botones">
-            <a class="btn btn-secondary" href="/planificador" role="button">Atrás</a>
-            <button class="btn btn-primary" type="submit">Guardar horario</button>
-        </div>
 
     </div>
 

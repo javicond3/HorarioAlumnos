@@ -2,14 +2,14 @@ const express = require('express');
 
 const router = express.Router();
 
-const cursoActualController = require('../controllers/curso_actual/cursoActualController');
-const planificadorController = require('../controllers/planificador/planificadorController');
-const horariosGuardadosController = require('../controllers/horarios_guardados/horariosGuradadosController');
-const filtroController = require('../controllers/planificador/filtroController');
-const getHorariosController = require('../controllers/planificador/getHorariosController');
-const getExamenesController = require('../controllers/curso_actual/getExamenesController');
-const getPlanesController = require('../controllers/planificador/getPlanesController');
-const getHorarioActualController = require('../controllers/curso_actual/getHorarioActualController');
+const cursoActualController = require('../controllers/cursoActualController');
+const planificadorController = require('../controllers/planificadorController');
+const horariosGuardadosController = require('../controllers/horariosGuradadosController');
+const filtroController = require('../controllers/filtroController');
+const horarioController = require('../controllers/horarioController');
+const examenController = require('../controllers/examenController');
+const planController = require('../controllers/planController');
+
 
 /* GET home page.
 (redirige a curso_actual/horario) */
@@ -19,27 +19,31 @@ router.get('/', (req, res) => {
 
 /* Rutas de curso actual. */
 router.get('/curso_actual/horario',
-  getHorarioActualController.getHorarios,
-  getHorarioActualController.generaHorario,
+  horarioController.getActual,
   cursoActualController.horario);
 router.get('/curso_actual/examenes',
-  getExamenesController.getExamenes,
+  examenController.fetch,
+  examenController.formatear,
   cursoActualController.examenes);
 
 /* Rutas de planificador. */
 router.get('/planificador',
-  getPlanesController.getPlanes,
+  planController.fetch,
   planificadorController.planificador);
 router.get('/filtrar', // Ruta para el filtro del planificador
-  getPlanesController.getPlanes,
+  planController.fetch,
   filtroController.filtrarAsignaturas,
   planificadorController.planificador);
 router.post('/planificador_2',
-  getHorariosController.getHorarios,
-  getHorariosController.generarHorarios,
+  horarioController.fetch,
+  horarioController.combinar,
   planificadorController.planificador_2);
+router.post('/guardarHorario', // Ruta para guardar el horario en la BBDD
+  horarioController.guardar);
 
 /* Rutas de horarios guardados. */
-router.get('/horarios_guardados', horariosGuardadosController.horarios);
+router.get('/horarios_guardados',
+  horarioController.cargar,
+  horariosGuardadosController.horarios);
 
 module.exports = router;

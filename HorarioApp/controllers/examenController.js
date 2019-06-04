@@ -1,8 +1,32 @@
+const fetch = require('node-fetch');
+
+// POST /planificador_2
+exports.fetch = (req, res, next) => {
+  // Cuando la API esté disponible, obtener los datos de matírcula del alumno que ha iniciado sesión
+
+  // Datos de prueba
+  const asigPrueba = ['95000001', '95000002', '95000003', '95000004'];
+  const listaAsignaturas = asigPrueba.reduce((acc, asig) => `${acc},${asig}`);
+  const grado = '09TT';
+  const ano = '201718';
+  const semestre = '1S';
+
+  // URL para pedir el JSON con los exámenes de las asignaturas cursadas por el alumno
+  const url = `https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/${grado}/${ano}/${semestre}/${listaAsignaturas}/examenes`;
+
+  fetch(url)
+    .then(respuesta => respuesta.json())
+    .then((json) => {
+      res.locals.asigConExamenes = json;
+      next();
+    })
+    .catch(err => console.error(err));
+};
+
 /**
  * Función que toma un objeto con los exámenes en las asignauras tal cual
  * se obtienen del JSON de la API y devuelve un objeto con los exámenes
- * reorganizados, todos juntos en su respectiva convocatoria y ordenados
- * de más próximo a más lejano.
+ * reorganizados, todos juntos en su respectiva convocatoria.
  */
 const formatearExamenes = (asigConExamenes) => {
   const examenes = {
@@ -58,16 +82,13 @@ const ordenarExamPorFecha = (examenes) => {
   });
 };
 
-// GET /curso_actual/horario
-exports.horario = (req, res) => {
-  res.render('curso_actual/horario', { scripts: '' });
-};
-
 // GET /curso_actual/examenes
-exports.examenes = (req, res) => {
+exports.formatear = (req, res, next) => {
   const { asigConExamenes } = res.locals;
   const examenes = formatearExamenes(asigConExamenes);
   ordenarExamPorFecha(examenes);
 
-  res.render('curso_actual/examenes', { examenes, scripts: '' });
+  res.locals.examenes = examenes;
+
+  next();
 };

@@ -4,16 +4,16 @@ const fetch = require('node-fetch');
 exports.filtrarAsignaturas = (req, res, next) => {
   // Datos introducidos en el formulario por el usuario
   const response = {
-    grado: req.query.grado,
+    plan: req.query.plan,
     curso: req.query.curso, // Es un array (checkbox)
     semestre: req.query.semestre,
     itinerario: req.query.itinerario,
     ano: req.query.ano,
   };
 
-  // Guardamos los parámetros en variable local para que sean accesibles
+  // Guardamos los parámetros en variable locals para que sean accesibles
   // en el siguiente middleware y las vistas
-  res.locals.grado = response.grado;
+  res.locals.plan = response.plan;
   res.locals.ano = response.ano;
   res.locals.semestre = response.semestre;
 
@@ -40,7 +40,7 @@ exports.filtrarAsignaturas = (req, res, next) => {
 
   // Genera una URL por cada curso seleccionado y la guarda en el array urls
   response.curso.forEach((curso) => {
-    urls.push(`https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/${response.grado}/201718/${response.semestre}/${curso}`);
+    urls.push(`https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/${response.plan}/201718/${response.semestre}/${curso}`);
   });
 
   /**
@@ -64,6 +64,7 @@ exports.filtrarAsignaturas = (req, res, next) => {
 
   fetchJSONs.then(() => {
     res.locals.asignaturas = asignaturasJSON;
+
     next();
   });
 };

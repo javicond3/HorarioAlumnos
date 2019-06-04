@@ -1,6 +1,6 @@
 // Definicion del modelo Alumno:
 
-module.exports = (sequelize, DataTypes) => sequelize.define('Asignatura', {
+module.exports = (sequelize, DataTypes) => sequelize.define('Alumno', {
   // Atributos
   correo: {
     type: DataTypes.STRING,

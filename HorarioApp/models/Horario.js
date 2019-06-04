@@ -1,6 +1,6 @@
 // Definicion del modelo Horario:
 
-module.exports = (sequelize, DataTypes) => sequelize.define('Asignatura', {
+module.exports = (sequelize, DataTypes) => sequelize.define('Horario', {
   // Atributos
   ano: {
     type: DataTypes.STRING,

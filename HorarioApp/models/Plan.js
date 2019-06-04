@@ -1,19 +1,22 @@
 // Definicion del modelo Plan:
 
-module.exports = (sequelize, DataTypes) => sequelize.define('Plan', {
-  // Atributos
-  codigo: {
-    type: DataTypes.STRING,
-    unique: true,
-    allowNull: false,
-  },
-  acronimo: {
-    type: DataTypes.STRING,
-  },
-  nombre: {
-    type: DataTypes.STRING,
-  },
-  cursos: {
-    type: DataTypes.INTEGER,
-  },
-});
+module.exports = (sequelize, DataTypes) => {
+  const plan = sequelize.define('Plan', {
+    // Atributos
+    codigo: {
+      type: DataTypes.STRING,
+      primaryKey: true,
+    },
+    acronimo: {
+      type: DataTypes.STRING,
+    },
+    nombre: {
+      type: DataTypes.STRING,
+    },
+    cursos: {
+      type: DataTypes.INTEGER,
+    },
+  });
+  plan.removeAttribute('id');
+  return plan;
+};
