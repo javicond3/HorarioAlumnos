@@ -44,6 +44,15 @@
 
     <div id="content" class="col-md-9">
 
+        <% if (msg) { 
+            const alertType = saved ? 'alert-success' : 'alert-danger';
+        %>
+        <div id="msg" class="alert <%= alertType %>" role="alert">
+            <%= msg %>
+        </div>
+        <% } %>
+
+
         <div id="timetable">
             <table class="table table-bordered table-sm">
                 <thead class="thead-light">

@@ -285,6 +285,21 @@ exports.combinar = (req, res, next) => {
   next();
 };
 
+
+/**
+ * Función auxiliar que devuelve una promesa que se resolverá con valor true
+ * si ya existe un alumno en la BBDD con ese correo, o falso en caso contrario.
+ *
+ */
+const existeAlumno = correo => models.Alumno.count({ where: { correo } })
+  .then((count) => {
+    if (count !== 0) {
+      return true;
+    }
+    return false;
+  });
+
+
 // POST /planificador_2
 exports.guardar = (req, res, next) => {
   // Parámetros del formulario oculto
@@ -301,34 +316,55 @@ exports.guardar = (req, res, next) => {
       planBuscado = planes[0];
     }); */
 
-  // Crea un objeto compatible con la tabla Horario
-  const horario = models.Horario.build({
-    ano,
-    semestre,
-    asignaturas,
-    grupos,
-    planId: plan,
-  });
 
-  // Guarda en la BBDD los campos del objeto
-  horario.save()
-    .then(() => {
-      res.locals.msg = 'Horario guardado con éxito.';
-      res.locals.saved = true;
-      next();
+  // Identificamos al alumno con su correo electŕonico
+  const correo = 'prueba@upm.es';
+
+  // Función que devuelve una promesa que añade un horario a la BBDD
+  const promesaCreaHorario = () => new Promise((resolve, reject) => resolve(
+    models.Horario.build({
+      ano,
+      semestre,
+      asignaturas,
+      grupos,
+      alumnoId: correo,
+      planId: plan,
     })
-    .catch(Sequelize.ValidationError, (error) => {
-      console.log('Error de validación, los datos del horario no son correctos.');
-      error.errors.forEach((elem) => {
-        console.log(error.errors[elem].value);
-      });
+      .save()
+      .then(() => {
+        res.locals.msg = 'Horario guardado con éxito.';
+        res.locals.saved = true;
+        next();
+      })
+      .catch(Sequelize.ValidationError, (error) => {
+        console.log('Error de validación, los datos del horario no son correctos.');
+        error.errors.forEach((elem) => {
+          console.log(error.errors[elem].value);
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        res.locals.msg = 'Error. No se ha podido guardar el horario';
+        res.locals.saved = false;
+        next();
+      }),
+  ));
+
+  // Función que devuelve una promesa que añade un alumno a la BBDD
+  const promesaCreaAlumno = () => new Promise((resolve, reject) => resolve(
+    models.Alumno.build({ correo })
+      .save()
+      .catch(err => console.log(err)),
+  ));
+
+  existeAlumno(correo)
+    .then((existe) => {
+      if (!existe) { // Si no existe lo creamos
+        return promesaCreaAlumno().then(promesaCreaHorario);
+      }
+      return promesaCreaHorario();
     })
-    .catch((error) => {
-      console.log(error);
-      res.locals.msg = 'Error. No se ha podido guardar el horario';
-      res.locals.saved = false;
-      next();
-    });
+    .then(() => { });
 };
 
 
@@ -407,4 +443,5 @@ exports.cargar = (req, res, next) => {
   // Hacer la vista
   // Cargarlos todos (ocultos)
   // Seleccionar con js
+  next();
 };
