@@ -473,6 +473,7 @@ exports.cargar = (req, res, next) => {
     .then((horarios) => {
       const promises = [];
       horarios.forEach((horario, index) => {
+        const horarioId = horario.id;
         const { ano } = horario;
         const { semestre } = horario;
         const { asignaturas } = horario;
@@ -495,7 +496,7 @@ exports.cargar = (req, res, next) => {
 
         const url = `https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/${plan}/${ano}/${semestre}/${listaAsignaturas}/horarios`;
 
-        promises.push(promesaFetchHorarios(url, gruposMatriculado, index));
+        promises.push(promesaFetchHorarios(url, gruposMatriculado, horarioId));
       });
 
       return Promise.all(promises);
@@ -507,4 +508,24 @@ exports.cargar = (req, res, next) => {
       next();
     })
     .catch(err => console.error(err));
+};
+
+// POST borrarHorario
+exports.borrar = (req, res, next) => {
+  const horarioId = req.body.id;
+
+  models.Horario.destroy({ where: { id: horarioId } })
+    .then(() => {
+      res.locals.saved = true;
+      res.locals.msg = 'Horario borrado con éxito';
+
+      next();
+    })
+    .catch((err) => {
+      res.locals.saved = true;
+      res.locals.msg = 'Horario borrado con éxito';
+      console.log(err);
+
+      next();
+    });
 };

@@ -47,5 +47,9 @@ router.post('/guardarHorario', // Ruta para guardar el horario en la BBDD
 router.get('/horarios_guardados',
   horarioController.cargar,
   horariosGuardadosController.horarios);
+router.post('/borrarHorario', // Ruta para borrar el horario en la BBDD
+  horarioController.borrar,
+  horarioController.cargar,
+  horariosGuardadosController.horarios);
 
 module.exports = router;
