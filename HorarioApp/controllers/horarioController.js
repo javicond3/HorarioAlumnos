@@ -213,6 +213,7 @@ const generarHorariosCombinados = (combinaciones, horariosPorCurso) => {
   combGrupos.forEach((comb, ind) => {
     const horarioCombinado = {
       id: ind, // Id única para cada horario
+      cursos: combinaciones.cursos, // Cursos a los que pertencen las asignaturas
       grupos: comb, // Grupos que forman el horario
       haySolapamiento: false, // Indica si hay solapamiento de asignaturas
       tabla: generaDiasConHoras(), // Tabla para representarlo en la vista
@@ -307,6 +308,7 @@ exports.guardar = (req, res, next) => {
   const { semestre } = req.body;
   const { plan } = req.body;
   const asignaturas = JSON.parse(req.body.asignaturas); // Array con códigos de asignaturas selec.
+  const cursos = JSON.parse(req.body.cursos);
   const grupos = JSON.parse(req.body.grupos);
 
   /* // Recuperamos el plan al que corresponde el horario de la BBDD
@@ -326,6 +328,7 @@ exports.guardar = (req, res, next) => {
       ano,
       semestre,
       asignaturas,
+      cursos,
       grupos,
       alumnoId: correo,
       planId: plan,
@@ -369,11 +372,25 @@ exports.guardar = (req, res, next) => {
 
 
 /**
- * Función que genera un horario tomando como parámetros las asignaturas y los
- * grupos en los que está matriculado el alumno.
+ * Función que genera un horario tomando como parámetros un objeto con las
+ * asignaturas con horarios y los grupos en los que está matriculado el
+ * alumno. El objeto gruposMatriculado tiene la estructura
+ * { curso: grupo }. Ej: { 1: 11.1, 2: 21.1 }
+ *
+ * El parámetro id solo se usa para identificar los horarios en la vista
+ * horarios_guardados, en la vista curso_actual/horario no se usa.
  */
-const generaHorarioActual = (asignaturas, gruposMatriculado) => {
+const generaHorarioConGrupos = (asignaturas, gruposMatriculado, id = 0) => {
+  // Array con los grupos (solo para mostrarlos en las vistas)
+  const arrayGrupos = [];
+  Object.keys(gruposMatriculado).forEach((curso) => {
+    const grupo = gruposMatriculado[curso];
+    arrayGrupos.push(grupo);
+  });
+
   const horarioCombinado = {
+    id,
+    grupos: arrayGrupos,
     tabla: generaDiasConHoras(), // Tabla para representarlo en la vista
     notas: {}, // Observaciones
   };
@@ -429,7 +446,7 @@ exports.getActual = (req, res, next) => {
     .then(respuesta => respuesta.json())
     .then((json) => {
       const asigConHorario = json;
-      res.locals.horario = generaHorarioActual(asigConHorario, gruposMatriculado);
+      res.locals.horario = generaHorarioConGrupos(asigConHorario, gruposMatriculado);
       next();
     })
     .catch(err => console.error(err));
@@ -438,10 +455,56 @@ exports.getActual = (req, res, next) => {
 
 // GET /horarios_guardados
 exports.cargar = (req, res, next) => {
-  // revisar que todo va bien
-  // cargar horarios (todos) de la BBDD
-  // Hacer la vista
-  // Cargarlos todos (ocultos)
-  // Seleccionar con js
-  next();
+  const correo = 'prueba@upm.es';
+  const horariosFormateados = [];
+  const promesaFetchHorarios = (url, gruposMatriculado, index) => new Promise((resolve, reject) => {
+    resolve(
+      fetch(url)
+        .then(respuesta => respuesta.json())
+        .then((json) => {
+          const asigConHorario = json;
+          const horarioFormateado = generaHorarioConGrupos(asigConHorario, gruposMatriculado, index);
+          horariosFormateados.push(horarioFormateado);
+        })
+        .catch(err => console.error(err)),
+    );
+  });
+  models.Horario.findAll({ where: { alumnoId: correo } })
+    .then((horarios) => {
+      const promises = [];
+      horarios.forEach((horario, index) => {
+        const { ano } = horario;
+        const { semestre } = horario;
+        const { asignaturas } = horario;
+        const { cursos } = horario;
+        const { grupos } = horario;
+        const plan = horario.planId;
+
+        const listaAsignaturas = asignaturas.reduce((acc, asig) => `${acc},${asig}`);
+
+        // Creamos un objeto compatible con la función generaHorariosConGrupos a partir
+        // de los cursos y grupos guardados en la BBDD. La estructura debe ser
+        // {curso1: grupo1, curso2: grupo2, ...}
+        const gruposMatriculado = {};
+        cursos.forEach((curso, ind) => {
+          // El array de cursos tiene el mismo orden que el de grupos, por lo que el índice
+          // del curso y del grupo correspondiente a ese curso es el mismo:
+          // [1,2,3] [11.1, 23.1, 32.1]
+          gruposMatriculado[curso] = grupos[ind];
+        });
+
+        const url = `https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/${plan}/${ano}/${semestre}/${listaAsignaturas}/horarios`;
+
+        promises.push(promesaFetchHorarios(url, gruposMatriculado, index));
+      });
+
+      return Promise.all(promises);
+    })
+    .then(() => {
+      console.log(horariosFormateados);
+
+      res.locals.horarios = horariosFormateados;
+      next();
+    })
+    .catch(err => console.error(err));
 };

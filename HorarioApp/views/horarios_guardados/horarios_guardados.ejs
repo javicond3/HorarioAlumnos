@@ -4,19 +4,31 @@
 
         <div id="saved_list">
             <h4>Horarios guardados</h4>
-            <table class="table table-hover">
-                <tbody>
-                    <tr class="table-primary">
-                        <td>1</td>
-                        <td>2º: 22.1, 3º:32.1</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>2º: 22.1, 3º:32.1</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="form-group">
+                <label for="horarioSelector">Elige un horario para mostrar</label>
+                <select class="form-control" id="horarioSelector">
+                    <option value="" selected disabled hidden>Selecciona horario</option>
+
+                    <% if (horarios) { %>
+                    <% horarios.forEach((horario) => { %>
+                    <option value="<%= horario.id %>">
+                        <%= horario.grupos.reduce((acc, ele, index) => { 
+                                            if (index === 0) {
+                                                return acc += ele;
+                                            } else {
+                                                return acc += `, ${ele}`;
+                                            }
+                                        }, '') %>
+                    </option>
+                    <% }); %>
+                    <% } else { %>
+                    <option value="" disabled>Vacío</option>
+                    <% } %>
+                </select>
+            </div>
         </div>
+
+
 
         <div id="details">
             <h4>Detalles</h4>
@@ -44,7 +56,7 @@
 
     <div id="content" class="col-md-9">
 
-        <% if (msg) { 
+        <% if (locals.msg) { 
             const alertType = saved ? 'alert-success' : 'alert-danger';
         %>
         <div id="msg" class="alert <%= alertType %>" role="alert">
@@ -52,8 +64,9 @@
         </div>
         <% } %>
 
-
-        <div id="timetable">
+        <% if (horarios) { %>
+        <% horarios.forEach((horario) => { %>
+        <div class="horarioGuardado" id="horario<%= horario.id %>">
             <table class="table table-bordered table-sm">
                 <thead class="thead-light">
                     <tr>
@@ -68,116 +81,137 @@
                 <tbody>
                     <tr>
                         <th scope="row">8-9</th>
-                        <td>IACR</td>
-                        <td>COTE</td>
-                        <td>CORE</td>
-                        <td>ISST</td>
-                        <td>DORE</td>
+                        <td><%= horario.tabla.L['08'] %></td>
+                        <td><%= horario.tabla.M['08'] %></td>
+                        <td><%= horario.tabla.X['08'] %></td>
+                        <td><%= horario.tabla.J['08'] %></td>
+                        <td><%= horario.tabla.V['08'] %></td>
                     </tr>
                     <tr>
                         <th scope="row">9-10</th>
-                        <td>IACR</td>
-                        <td>COTE</td>
-                        <td>CORE</td>
-                        <td>ISST</td>
-                        <td>DORE</td>
+                        <td><%= horario.tabla.L['09'] %></td>
+                        <td><%= horario.tabla.M['09'] %></td>
+                        <td><%= horario.tabla.X['09'] %></td>
+                        <td><%= horario.tabla.J['09'] %></td>
+                        <td><%= horario.tabla.V['09'] %></td>
                     </tr>
                     <tr>
                         <th scope="row">10-11</th>
-                        <td>IACR</td>
-                        <td>COTE</td>
-                        <td>CORE</td>
-                        <td>ISST</td>
-                        <td>DORE</td>
+                        <td><%= horario.tabla.L['10'] %></td>
+                        <td><%= horario.tabla.M['10'] %></td>
+                        <td><%= horario.tabla.X['10'] %></td>
+                        <td><%= horario.tabla.J['10'] %></td>
+                        <td><%= horario.tabla.V['10'] %></td>
                     </tr>
                     <tr>
                         <th scope="row">11-12</th>
-                        <td>IACR</td>
-                        <td>COTE</td>
-                        <td>CORE</td>
-                        <td>ISST</td>
-                        <td>DORE</td>
+                        <td><%= horario.tabla.L['11'] %></td>
+                        <td><%= horario.tabla.M['11'] %></td>
+                        <td><%= horario.tabla.X['11'] %></td>
+                        <td><%= horario.tabla.J['11'] %></td>
+                        <td><%= horario.tabla.V['11'] %></td>
                     </tr>
                     <tr>
                         <th scope="row">12-13</th>
-                        <td>IACR</td>
-                        <td>COTE</td>
-                        <td>CORE</td>
-                        <td>ISST</td>
-                        <td>DORE</td>
+                        <td><%= horario.tabla.L['12'] %></td>
+                        <td><%= horario.tabla.M['12'] %></td>
+                        <td><%= horario.tabla.X['12'] %></td>
+                        <td><%= horario.tabla.J['12'] %></td>
+                        <td><%= horario.tabla.V['12'] %></td>
                     </tr>
                     <tr>
                         <th scope="row">13-14</th>
-                        <td>IACR</td>
-                        <td>COTE</td>
-                        <td>CORE</td>
-                        <td>ISST</td>
-                        <td>DORE</td>
+                        <td><%= horario.tabla.L['13'] %></td>
+                        <td><%= horario.tabla.M['13'] %></td>
+                        <td><%= horario.tabla.X['13'] %></td>
+                        <td><%= horario.tabla.J['13'] %></td>
+                        <td><%= horario.tabla.V['13'] %></td>
                     </tr>
                     <tr>
                         <th scope="row">14-15</th>
-                        <td>IACR</td>
-                        <td>COTE</td>
-                        <td>CORE</td>
-                        <td>ISST</td>
-                        <td>DORE</td>
+                        <td><%= horario.tabla.L['14'] %></td>
+                        <td><%= horario.tabla.M['14'] %></td>
+                        <td><%= horario.tabla.X['14'] %></td>
+                        <td><%= horario.tabla.J['14'] %></td>
+                        <td><%= horario.tabla.V['14'] %></td>
                     </tr>
                     <tr>
                         <th scope="row">15-16</th>
-                        <td>IACR</td>
-                        <td>COTE</td>
-                        <td>CORE</td>
-                        <td>ISST</td>
-                        <td>DORE</td>
+                        <td><%= horario.tabla.L['15'] %></td>
+                        <td><%= horario.tabla.M['15'] %></td>
+                        <td><%= horario.tabla.X['15'] %></td>
+                        <td><%= horario.tabla.J['15'] %></td>
+                        <td><%= horario.tabla.V['15'] %></td>
                     </tr>
                     <tr>
                         <th scope="row">16-17</th>
-                        <td>IACR</td>
-                        <td>COTE</td>
-                        <td>CORE</td>
-                        <td>ISST</td>
-                        <td>DORE</td>
+                        <td><%= horario.tabla.L['16'] %></td>
+                        <td><%= horario.tabla.M['16'] %></td>
+                        <td><%= horario.tabla.X['16'] %></td>
+                        <td><%= horario.tabla.J['16'] %></td>
+                        <td><%= horario.tabla.V['16'] %></td>
                     </tr>
                     <tr>
                         <th scope="row">17-18</th>
-                        <td>IACR</td>
-                        <td>COTE</td>
-                        <td>CORE</td>
-                        <td>ISST</td>
-                        <td>DORE</td>
+                        <td><%= horario.tabla.L['17'] %></td>
+                        <td><%= horario.tabla.M['17'] %></td>
+                        <td><%= horario.tabla.X['17'] %></td>
+                        <td><%= horario.tabla.J['17'] %></td>
+                        <td><%= horario.tabla.V['17'] %></td>
                     </tr>
                     <tr>
                         <th scope="row">18-19</th>
-                        <td>IACR</td>
-                        <td>COTE</td>
-                        <td>CORE</td>
-                        <td>ISST</td>
-                        <td>DORE</td>
+                        <td><%= horario.tabla.L['18'] %></td>
+                        <td><%= horario.tabla.M['18'] %></td>
+                        <td><%= horario.tabla.X['18'] %></td>
+                        <td><%= horario.tabla.J['18'] %></td>
+                        <td><%= horario.tabla.V['18'] %></td>
                     </tr>
                     <tr>
                         <th scope="row">19-20</th>
-                        <td>IACR</td>
-                        <td>COTE</td>
-                        <td>CORE</td>
-                        <td>ISST</td>
-                        <td>DORE</td>
+                        <td><%= horario.tabla.L['19'] %></td>
+                        <td><%= horario.tabla.M['19'] %></td>
+                        <td><%= horario.tabla.X['19'] %></td>
+                        <td><%= horario.tabla.J['19'] %></td>
+                        <td><%= horario.tabla.V['19'] %></td>
                     </tr>
                     <tr>
                         <th scope="row">20-21</th>
-                        <td>IACR</td>
-                        <td>COTE</td>
-                        <td>CORE</td>
-                        <td>ISST</td>
-                        <td>DORE</td>
+                        <td><%= horario.tabla.L['20'] %></td>
+                        <td><%= horario.tabla.M['20'] %></td>
+                        <td><%= horario.tabla.X['20'] %></td>
+                        <td><%= horario.tabla.J['20'] %></td>
+                        <td><%= horario.tabla.V['20'] %></td>
                     </tr>
                 </tbody>
             </table>
-        </div>
 
-        <div id="botones">
-            <button class="btn btn-danger" type="delete"> Borrar horario</button>
-            <a class="btn btn-primary" href="/planificador" role="button">Editar horario</a>
+            <div id="observaciones">
+                <h4>Observaciones</h4>
+                <% Object.keys(horario.notas).forEach((nomAsig) => { 
+                    const notasAsig = horario.notas[nomAsig]; %>
+                <h6><%= nomAsig %></h6>
+                <ul>
+                    <% notasAsig.forEach((nota) => { %>
+                    <li><%= nota %></li>
+
+                    <%  });%>
+                </ul>
+                <%  }); %>
+            </div>
+
+            <div id="botones">
+                <form id="borrarHorarioForm" class="d-inline" method="POST" action="/borrarHorario">
+                    <input type="hidden" name="id" value="<%= horario.id %>">
+                    <button class="btn btn-danger" type="submit">Borrar horario</button>
+                </form>
+            </div>
+
         </div>
+        <% }); %>
+        <% } %>
+
+
 
     </div>
 

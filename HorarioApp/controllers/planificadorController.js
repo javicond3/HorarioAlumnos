@@ -21,7 +21,7 @@ exports.planificador = (req, res) => {
 // POST /planificador_2
 exports.planificador_2 = (req, res) => {
   // Scripts que se incluyen en la vista para el lado cliente
-  const scripts = ['seleccionHorario'];
+  const scripts = ['seleccionHorarioPosible'];
 
   // Los horarios ya se han guardado en res.locals.horarios en el mw anterior
 

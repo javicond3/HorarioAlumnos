@@ -40,6 +40,7 @@ router.post('/planificador_2',
   planificadorController.planificador_2);
 router.post('/guardarHorario', // Ruta para guardar el horario en la BBDD
   horarioController.guardar,
+  horarioController.cargar,
   horariosGuardadosController.horarios);
 
 /* Rutas de horarios guardados. */

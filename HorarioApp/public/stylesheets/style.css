@@ -27,6 +27,12 @@ main > div > .row {
   display: none;
 }
 
+/* En horarios_guardados, las tablas de los horarios deben permancer ocultas
+ * (hasta que sean seleccionadas) */
+ .horarioGuardado{
+  display: none;
+}
+
 .solapado{
   background-color: red;
 }

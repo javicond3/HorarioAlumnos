@@ -13,6 +13,9 @@ module.exports = (sequelize, DataTypes) => sequelize.define('Horario', {
   asignaturas: {
     type: DataTypes.ARRAY(DataTypes.STRING),
   },
+  cursos: {
+    type: DataTypes.ARRAY(DataTypes.STRING),
+  },
   grupos: {
     type: DataTypes.ARRAY(DataTypes.STRING),
   },
