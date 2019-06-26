@@ -5,16 +5,10 @@ const Sequelize = require('sequelize');
 
 // DATABASE_URL = postgres://user:passwd@host:port/database
 const databaseURL = `postgres://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:5432/${process.env.POSTGRES_DB}`;
-// const databaseSessionUrl = `postgres://${process.env.DBSESSION_USERNAME}:${process.env.DBSESSION_PASSWORD}@dbsession:5432/${process.env.POSTGRESSESION_DB}`;
+
 const logs = (process.env.DEV === 'true'); // Si estamos en desarrollo se generarán logs
 
-/* if (process.env.DOCKER === 'true') {
- databaseURL = ``;
- databaseSessionUrl = ``;
-}  */
-
 const sequelize = new Sequelize(databaseURL, { logging: logs });
-// const sequelizeSession = new Sequelize(databaseSessionUrl, { logging: logs });
 
 
 // Importar la definicion de las tablas

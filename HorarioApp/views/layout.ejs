@@ -10,7 +10,7 @@
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     <!-- Custom CSS -->
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='<%= contextPath %>/stylesheets/style.css' />
 
     <title>HorarioApp</title>
 </head>
@@ -18,7 +18,7 @@
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-            <a class="navbar-brand" href="/">HorarioApp</a>
+            <a class="navbar-brand" href="<%= contextPath %>/">HorarioApp</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navTop"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -26,16 +26,16 @@
             <div id="navTop" class="collapse navbar-collapse justify-content-end">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="/curso_actual/horario">Curso actual</a>
+                        <a class="nav-link" href="<%= contextPath %>/curso_actual/horario">Curso actual</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/planificador">Planificador</a>
+                        <a class="nav-link" href="<%= contextPath %>/planificador">Planificador</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/horarios_guardados">Horarios guardados</a>
+                        <a class="nav-link" href="<%= contextPath %>/horarios_guardados">Horarios guardados</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/logout">Logout</a>
+                        <a class="nav-link" href="<%= contextPath %>/logout">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -63,7 +63,7 @@
         crossorigin="anonymous"></script>
     <% if (Array.isArray(scripts) && scripts.length) { %>
     <% scripts.forEach(script => { %>
-    <script src="js/<%= script %>.js"></script>
+    <script src="<%= contextPath %>/js/<%= script %>.js"></script>
     <% }); %>
     <% } %>
 

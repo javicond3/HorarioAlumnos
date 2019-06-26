@@ -202,8 +202,8 @@
             </div>
 
             <div id="botones">
-                <a class="btn btn-secondary" href="/planificador" role="button">Atrás</a>
-                <form id="guardarHorarioForm" class="d-inline" method="POST" action="/guardarHorario">
+                <a class="btn btn-secondary" href="<%= contextPath %>/planificador" role="button">Atrás</a>
+                <form id="guardarHorarioForm" class="d-inline" method="POST" action="<%= contextPath %>/guardarHorario">
                     <input type="hidden" name="ano" value="<%= ano %>">
                     <input type="hidden" name="semestre" value="<%= semestre %>">
                     <input type="hidden" name="plan" value="<%= plan %>">

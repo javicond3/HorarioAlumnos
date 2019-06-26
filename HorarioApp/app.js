@@ -1,6 +1,7 @@
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
+const normalizePath = require('normalize-path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const methodOverride = require('method-override');
@@ -18,7 +19,7 @@ const indexRouter = require('./routes/index');
 const app = express();
 
 // Variable para establecer el contexto cuando la app se despliegue en el servidor
-const contextPath = path.normalize(process.env.CONTEXT);
+const contextPath = normalizePath(process.env.CONTEXT);
 
 // Middleware para imprimir información de debug
 const printController = require('./controllers/printController');
@@ -63,11 +64,28 @@ app.use((req, res, next) => {
   // Hacer visible req.session en las vistas
   res.locals.session = req.session;
 
+  // Pasar contextPath a las vistas
+  res.locals.contextPath = contextPath;
+  console.log(contextPath);
+
+
   // Guardar la información de la sesión cas en req.session.user
   // req.session.user = req.session[cas.user.info]
 
   next();
 });
+
+// Para que la redireccón del CAS funcione.
+// Por permisos no podemos redirigir directamente
+// a localhost/contextPath.
+const checkFirstTime = (req, res, next) => {
+  if (!req.session.user.noFirst) {
+    req.session.user.noFirst = true;
+    res.redirect(contextPath);
+  } else {
+    next();
+  }
+};
 
 /**
  * Rutas que comienzan por contextPath usan indexRouter.
@@ -78,13 +96,16 @@ app.use(contextPath,
   // cas.bounce,
   // printController.session,
   // permissionController.checkStudentRole,
+  // checkFirstTime,
   indexRouter);
+
+// app.use(contextPath, indexRouter);
 
 /**
  * Ruta para desautenticar al cliente.
  * Después redirige a la página de logout del CAS.
  */
-app.get(path.join(contextPath, '/logout'), cas.logout);
+app.get(path.join(contextPath, 'logout'), cas.logout);
 
 
 // catch 404 and forward to error handler

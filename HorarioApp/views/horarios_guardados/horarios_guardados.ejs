@@ -201,7 +201,7 @@
             </div>
 
             <div id="botones">
-                <form id="borrarHorarioForm" class="d-inline" method="POST" action="/borrarHorario">
+                <form id="borrarHorarioForm" class="d-inline" method="POST" action="<%= contextPath %>/borrarHorario">
                     <input type="hidden" name="id" value="<%= horario.id %>">
                     <button class="btn btn-danger" type="submit">Borrar horario</button>
                 </form>

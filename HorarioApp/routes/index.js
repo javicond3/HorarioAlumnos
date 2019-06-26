@@ -10,11 +10,18 @@ const horarioController = require('../controllers/horarioController');
 const examenController = require('../controllers/examenController');
 const planController = require('../controllers/planController');
 
+router.all('*', (res, req, next) => {
+  console.log('BIEEEEEEEEEEN');
+  next();
+});
+
 
 /* GET home page.
 (redirige a curso_actual/horario) */
 router.get('/', (req, res) => {
-  res.redirect('/curso_actual/horario');
+  console.log(`la url base es: ${req.baseUrl}`);
+
+  res.redirect(`${req.baseUrl}/curso_actual/horario`);
 });
 
 /* Rutas de curso actual. */

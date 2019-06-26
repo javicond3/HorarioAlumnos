@@ -4,7 +4,7 @@
 
         <div id="filter">
             <h4>Filtros</h4>
-            <form method="GET" action="/filtrar">
+            <form method="GET" action="<%= contextPath %>/filtrar">
                 <div class="form-group">
                     <label for="plan">Plan de estudios</label>
                     <select class="form-control" id="plan" name="plan">
@@ -163,7 +163,7 @@
 
         <div id="botones">
             <button class="btn btn-danger" type="delete"> Borrar todo</button>
-            <form id="asigForm" class="d-inline" method="POST" action="/planificador_2">
+            <form id="asigForm" class="d-inline" method="POST" action="<%= contextPath %>/planificador_2">
                 <input type="hidden" name="asigSelec" value="">
                 <input type="hidden" name="plan" value="<%= plan %>">
                 <input type="hidden" name="ano" value="<%= ano %>">

@@ -8,7 +8,7 @@ exports.fetch = (req, res, next) => {
   const asigPrueba = ['95000001', '95000002', '95000003', '95000004'];
   const listaAsignaturas = asigPrueba.reduce((acc, asig) => `${acc},${asig}`);
   const grado = '09TT';
-  const ano = '201718';
+  const ano = '201819';
   const semestre = '1S';
 
   // URL para pedir el JSON con los exámenes de las asignaturas cursadas por el alumno
