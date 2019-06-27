@@ -8,6 +8,7 @@ const methodOverride = require('method-override');
 const favicon = require('serve-favicon');
 
 const session = require('express-session');
+const MemoryStore = require('memorystore')(session);
 const CASAuthentication = require('cas-authentication');
 
 // Middleware para usar un marco común a todas las vistas
@@ -40,11 +41,13 @@ app.use(methodOverride('_method')); // override with POST having ?_method=DELETE
 app.use(contextPath, express.static(path.join(__dirname, 'public')));
 app.use(partials());
 
-// Set up an Express session.
+// Set up an Express session with MemoryStore to avoid memory leaks.
 app.use(session({
+  cookie: { maxAge: 86400000 },
+  store: new MemoryStore({
+    checkPeriod: 86400000, // prune expired entries every 24h
+  }),
   secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: true,
 }));
 
 // Create a new instance of CASAuthentication.
