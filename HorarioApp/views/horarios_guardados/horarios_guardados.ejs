@@ -205,6 +205,14 @@
                     <input type="hidden" name="id" value="<%= horario.id %>">
                     <button class="btn btn-danger" type="submit">Borrar horario</button>
                 </form>
+                <form id="examenesForm" class="d-inline" method="POST"
+                    action="<%= contextPath %>/horarios_guardados/examenes">
+                    <input type="hidden" name="ano" value="<%= horario.ano %>">
+                    <input type="hidden" name="semestre" value="<%= horario.semestre %>">
+                    <input type="hidden" name="plan" value="<%= horario.plan %>">
+                    <input type="hidden" name="asignaturas" value="<%= JSON.stringify(horario.asignaturas) %>">
+                    <button class="btn btn-primary" type="submit">Ver exámenes</button>
+                </form>
             </div>
 
         </div>

@@ -1,0 +1,63 @@
+<div class="row">
+
+    <div id="sidebar" class="col-md-3">
+        <div class="list-group">
+            <a href="<%= contextPath %>/curso_actual/horario" class="list-group-item list-group-item-action">Horario</a>
+            <a href="<%= contextPath %>/curso_actual/examenes"
+                class="list-group-item list-group-item-action active">Exámenes</a>
+        </div>
+    </div>
+
+    <div id="content" class="col-md-9">
+        <h3>Próximos exámenes</h3>
+
+        <h4>Convocatoria ordinaria</h4>
+        <% if (examenes) { %>
+        <table class="table table-striped">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Hora</th>
+                    <th scope="col">Asignatura</th>
+                    <th scope="col">Duración</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% examenes.ordinaria.forEach((exam)=>{ %>
+                <tr>
+                    <td><%= exam.fecha ? exam.fecha : '-' %></td>
+                    <td><%= exam.hora ? exam.hora : '-' %></td>
+                    <td><%= exam.asignatura %></td>
+                    <td><%= exam.duracion ? exam.duracion : '-' %></td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+        <% } %>
+
+        <h4>Convocatoria extraordinaria</h4>
+        <% if (examenes) { %>
+        <table class="table table-striped">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Hora</th>
+                    <th scope="col">Asignatura</th>
+                    <th scope="col">Duración</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% examenes.extraordinaria.forEach((exam)=>{ %>
+                <tr>
+                    <td><%= exam.fecha ? exam.fecha : '-' %></td>
+                    <td><%= exam.hora ? exam.hora : '-' %></td>
+                    <td><%= exam.asignatura %></td>
+                    <td><%= exam.duracion ? exam.duracion : '-' %></td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+        <% } %>
+    </div>
+
+</div>

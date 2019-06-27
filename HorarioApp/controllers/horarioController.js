@@ -205,7 +205,7 @@ const calcCombinaciones = (horario) => {
  * pasados como parámetro.
  *
  */
-const generarHorariosCombinados = (combinaciones, horariosPorCurso) => {
+const generarHorariosCombinados = (combinaciones, horariosPorCurso, arrayAsignaturas) => {
   const horariosCombinados = [];
   const { combGrupos } = combinaciones;
 
@@ -215,6 +215,7 @@ const generarHorariosCombinados = (combinaciones, horariosPorCurso) => {
       id: ind, // Id única para cada horario
       cursos: combinaciones.cursos, // Cursos a los que pertencen las asignaturas
       grupos: comb, // Grupos que forman el horario
+      asignaturas: arrayAsignaturas, // Códigos de las asignaturas que componen el horario
       haySolapamiento: false, // Indica si hay solapamiento de asignaturas
       tabla: generaDiasConHoras(), // Tabla para representarlo en la vista
       notas: {}, // Observaciones
@@ -269,6 +270,11 @@ exports.combinar = (req, res, next) => {
   // recibido de la API en el middleware anterior.
   const asignaturas = res.locals.asigConHorario;
 
+  const arrayAsignaturas = [];
+  Object.keys(asignaturas).forEach((codigoAsig) => {
+    arrayAsignaturas.push(codigoAsig);
+  });
+
   // Objeto en el que guardamos la información de la API
   // con una estructura más manejable para pasos posteriores
   const horariosPorCurso = formatearHorarios(asignaturas);
@@ -279,9 +285,9 @@ exports.combinar = (req, res, next) => {
   const combinaciones = calcCombinaciones(horariosPorCurso);
 
   // Array con todos los horarios resultantes de las combinaciones
-  const horariosCombinados = generarHorariosCombinados(combinaciones, horariosPorCurso);
+  const horariosComb = generarHorariosCombinados(combinaciones, horariosPorCurso, arrayAsignaturas);
 
-  res.locals.horarios = horariosCombinados;
+  res.locals.horarios = horariosComb;
 
   next();
 };
@@ -380,7 +386,7 @@ exports.guardar = (req, res, next) => {
  * El parámetro id solo se usa para identificar los horarios en la vista
  * horarios_guardados, en la vista curso_actual/horario no se usa.
  */
-const generaHorarioConGrupos = (asignaturas, gruposMatriculado, id = 0) => {
+const generaHorarioConGrupos = (asignaturas, gruposMatriculado, id = 0, ano, semestre, plan) => {
   // Array con los grupos (solo para mostrarlos en las vistas)
   const arrayGrupos = [];
   Object.keys(gruposMatriculado).forEach((curso) => {
@@ -391,11 +397,16 @@ const generaHorarioConGrupos = (asignaturas, gruposMatriculado, id = 0) => {
   const horarioCombinado = {
     id,
     grupos: arrayGrupos,
+    ano,
+    semestre,
+    plan,
+    asignaturas: [], // Array con los códigos de las asignaturas
     tabla: generaDiasConHoras(), // Tabla para representarlo en la vista
     notas: {}, // Observaciones
   };
 
   Object.keys(asignaturas).forEach((codigoAsig) => {
+    horarioCombinado.asignaturas.push(codigoAsig);
     const asig = asignaturas[codigoAsig];
     const nombreAsig = asig.acronimo ? asig.acronimo : asig.nombre;
     const grupMatriculado = gruposMatriculado[asig.curso];
@@ -457,13 +468,13 @@ exports.getActual = (req, res, next) => {
 exports.cargar = (req, res, next) => {
   const correo = 'prueba@upm.es';
   const horariosFormateados = [];
-  const promesaFetchHorarios = (url, gruposMatriculado, index) => new Promise((resolve, reject) => {
+  const promesaFetchHorarios = (url, gruposMatriculado, horarioId, ano, semestre, plan) => new Promise((resolve, reject) => {
     resolve(
       fetch(url)
         .then(respuesta => respuesta.json())
         .then((json) => {
           const asigConHorario = json;
-          const horarioFormateado = generaHorarioConGrupos(asigConHorario, gruposMatriculado, index);
+          const horarioFormateado = generaHorarioConGrupos(asigConHorario, gruposMatriculado, horarioId, ano, semestre, plan);
           horariosFormateados.push(horarioFormateado);
         })
         .catch(err => console.error(err)),
@@ -472,7 +483,7 @@ exports.cargar = (req, res, next) => {
   models.Horario.findAll({ where: { alumnoId: correo } })
     .then((horarios) => {
       const promises = [];
-      horarios.forEach((horario, index) => {
+      horarios.forEach((horario) => {
         const horarioId = horario.id;
         const { ano } = horario;
         const { semestre } = horario;
@@ -496,21 +507,19 @@ exports.cargar = (req, res, next) => {
 
         const url = `https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/${plan}/${ano}/${semestre}/${listaAsignaturas}/horarios`;
 
-        promises.push(promesaFetchHorarios(url, gruposMatriculado, horarioId));
+        promises.push(promesaFetchHorarios(url, gruposMatriculado, horarioId, ano, semestre, plan));
       });
 
       return Promise.all(promises);
     })
     .then(() => {
-      console.log(horariosFormateados);
-
       res.locals.horarios = horariosFormateados;
       next();
     })
     .catch(err => console.error(err));
 };
 
-// POST borrarHorario
+// POST /borrarHorario
 exports.borrar = (req, res, next) => {
   const horarioId = req.body.id;
 

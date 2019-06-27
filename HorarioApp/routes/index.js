@@ -10,17 +10,10 @@ const horarioController = require('../controllers/horarioController');
 const examenController = require('../controllers/examenController');
 const planController = require('../controllers/planController');
 
-router.all('*', (res, req, next) => {
-  console.log('BIEEEEEEEEEEN');
-  next();
-});
-
 
 /* GET home page.
 (redirige a curso_actual/horario) */
 router.get('/', (req, res) => {
-  console.log(`la url base es: ${req.baseUrl}`);
-
   res.redirect(`${req.baseUrl}/curso_actual/horario`);
 });
 
@@ -29,6 +22,7 @@ router.get('/curso_actual/horario',
   horarioController.getActual,
   cursoActualController.horario);
 router.get('/curso_actual/examenes',
+  examenController.getDatosMatricula,
   examenController.fetch,
   examenController.formatear,
   cursoActualController.examenes);
@@ -58,5 +52,10 @@ router.post('/borrarHorario', // Ruta para borrar el horario en la BBDD
   horarioController.borrar,
   horarioController.cargar,
   horariosGuardadosController.horarios);
+router.post('/horarios_guardados/examenes', // Ruta para ver los examenes del horario guardado
+  examenController.getDatosHorarioGuardado,
+  examenController.fetch,
+  examenController.formatear,
+  horariosGuardadosController.examenes);
 
 module.exports = router;

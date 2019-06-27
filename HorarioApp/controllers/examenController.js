@@ -1,18 +1,51 @@
 const fetch = require('node-fetch');
 
-// POST /planificador_2
-exports.fetch = (req, res, next) => {
+// GET /curso_actual/examenes
+exports.getDatosMatricula = (req, res, next) => {
   // Cuando la API esté disponible, obtener los datos de matírcula del alumno que ha iniciado sesión
 
   // Datos de prueba
   const asigPrueba = ['95000001', '95000002', '95000003', '95000004'];
   const listaAsignaturas = asigPrueba.reduce((acc, asig) => `${acc},${asig}`);
-  const grado = '09TT';
+  const plan = '09TT';
   const ano = '201819';
   const semestre = '1S';
 
+  const datos = {
+    listaAsignaturas,
+    plan,
+    ano,
+    semestre,
+  };
+
+  res.locals.datos = datos;
+  next();
+};
+
+// POST /horarios_guardados/examenes
+exports.getDatosHorarioGuardado = (req, res, next) => {
+  const asignaturas = JSON.parse(req.body.asignaturas);
+  const listaAsignaturas = asignaturas.reduce((acc, asig) => `${acc},${asig}`);
+
+  const datos = {
+    listaAsignaturas,
+    plan: req.body.plan,
+    ano: req.body.ano,
+    semestre: req.body.semestre,
+  };
+
+  res.locals.datos = datos;
+  next();
+};
+
+// GET /curso_actual/examenes
+// POST /horarios_guardados/examenes
+exports.fetch = (req, res, next) => {
+  // Recuperamos los datos necesarios para hacer la petición
+  const { datos } = res.locals;
+
   // URL para pedir el JSON con los exámenes de las asignaturas cursadas por el alumno
-  const url = `https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/${grado}/${ano}/${semestre}/${listaAsignaturas}/examenes`;
+  const url = `https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/${datos.plan}/${datos.ano}/${datos.semestre}/${datos.listaAsignaturas}/examenes`;
 
   fetch(url)
     .then(respuesta => respuesta.json())
