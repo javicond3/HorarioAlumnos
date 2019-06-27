@@ -22,7 +22,7 @@
     "normalize-path": "^3.0.0",
     "pg": "^7.11.0",
     "pg-hstore": "^2.3.2",
-    "sequelize": "^6.0.0",
+    "sequelize": "^5.8.12",
     "serve-favicon": "^2.5.0"
   }
 }

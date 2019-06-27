@@ -48,6 +48,8 @@ app.use(session({
     checkPeriod: 86400000, // prune expired entries every 24h
   }),
   secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
 }));
 
 // Create a new instance of CASAuthentication.

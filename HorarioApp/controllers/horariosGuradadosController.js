@@ -9,7 +9,7 @@ exports.horarios = (req, res) => {
 // POST /horarios_guardados/examenes
 exports.examenes = (req, res) => {
   // Scripts que se incluyen en la vista para el lado cliente
-  const scripts = [''];
+  // const scripts = ['miScript1', 'miScript2'];
 
-  res.render('horarios_guardados/examenes', { scripts });
+  res.render('horarios_guardados/examenes', { scripts: '' });
 };
