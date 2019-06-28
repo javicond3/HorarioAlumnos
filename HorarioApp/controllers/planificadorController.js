@@ -1,7 +1,7 @@
 // GET /planificador
 exports.planificador = (req, res) => {
   // Scripts que se incluyen en la vista para el lado cliente
-  const scripts = ['seleccionAsignaturas'];
+  const scripts = ['seleccionAsignaturas', 'checkFilterParameters'];
 
   // Es redundante pasar como parámetro locals de res.render()
   // un res.locals.x, porque en la vista ya se podría acceder
