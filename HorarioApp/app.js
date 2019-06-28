@@ -11,11 +11,18 @@ const session = require('express-session');
 const MemoryStore = require('memorystore')(session);
 const CASAuthentication = require('cas-authentication');
 
+// Job scheduler
+const schedule = require('node-schedule');
+
 // Middleware para usar un marco común a todas las vistas
 const partials = require('express-partials');
 
 // Router principal
 const indexRouter = require('./routes/index');
+
+// Controlador de planes para la tarea programada
+const planController = require('./controllers/planController');
+
 
 const app = express();
 
@@ -43,10 +50,10 @@ app.use(partials());
 
 // Set up an Express session with MemoryStore to avoid memory leaks.
 app.use(session({
-  /*   cookie: { maxAge: 86400000 },
-    store: new MemoryStore({
-      checkPeriod: 86400000, // prune expired entries every 24h
-    }), */
+  cookie: { maxAge: 86400000 },
+  store: new MemoryStore({
+    checkPeriod: 86400000, // prune expired entries every 24h
+  }),
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
@@ -111,5 +118,22 @@ app.use((err, req, res) => {
   res.status(err.status || 500);
   res.render('error');
 });
+
+// Tarea programada para actualizar planes
+
+// Primera vez (solo al arrrancar)
+setTimeout(() => { planController.updatePlanes(); }, 4000);
+
+// Regla de recurrencia
+const rule = new schedule.RecurrenceRule();
+rule.dayOfWeek = 5; // Domingo
+rule.hour = 19;
+rule.minute = 40; // A las 00:00
+
+// Programar tarea
+const job = schedule.scheduleJob(rule, () => {
+  planController.updatePlanes();
+});
+
 
 module.exports = app;

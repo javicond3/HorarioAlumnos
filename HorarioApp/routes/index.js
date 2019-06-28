@@ -29,10 +29,10 @@ router.get('/curso_actual/examenes',
 
 /* Rutas de planificador. */
 router.get('/planificador',
-  planController.fetch,
+  planController.cargar,
   planificadorController.planificador);
 router.get('/filtrar', // Ruta para el filtro del planificador
-  planController.fetch,
+  planController.cargar,
   filtroController.filtrarAsignaturas,
   planificadorController.planificador);
 router.post('/planificador_2',
