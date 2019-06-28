@@ -43,10 +43,10 @@ app.use(partials());
 
 // Set up an Express session with MemoryStore to avoid memory leaks.
 app.use(session({
-  cookie: { maxAge: 86400000 },
-  store: new MemoryStore({
-    checkPeriod: 86400000, // prune expired entries every 24h
-  }),
+  /*   cookie: { maxAge: 86400000 },
+    store: new MemoryStore({
+      checkPeriod: 86400000, // prune expired entries every 24h
+    }), */
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
@@ -71,8 +71,6 @@ app.use((req, res, next) => {
 
   // Pasar contextPath a las vistas
   res.locals.contextPath = contextPath;
-  console.log(contextPath);
-
 
   // Guardar la información de la sesión cas en req.session.user
   // req.session.user = req.session[cas.user.info]
@@ -80,31 +78,16 @@ app.use((req, res, next) => {
   next();
 });
 
-// Para que la redireccón del CAS funcione.
-// Por permisos no podemos redirigir directamente
-// a localhost/contextPath.
-const checkFirstTime = (req, res, next) => {
-  if (!req.session.user.noFirst) {
-    req.session.user.noFirst = true;
-    res.redirect(contextPath);
-  } else {
-    next();
-  }
-};
-
 /**
- * Rutas que comienzan por contextPath usan indexRouter.
  * Los clientes no autenticados son redirigidos al CAS login.
  * Después son redirigidos a la ruta deseada.
  */
-app.use(contextPath,
-  // cas.bounce,
-  // printController.session,
-  // permissionController.checkStudentRole,
-  // checkFirstTime,
-  indexRouter);
+app.use(cas.bounce, permissionController.checkStudentRole);
 
-// app.use(contextPath, indexRouter);
+/**
+ * Rutas que comienzan por contextPath usan indexRouter.
+ */
+app.use(contextPath, indexRouter);
 
 /**
  * Ruta para desautenticar al cliente.

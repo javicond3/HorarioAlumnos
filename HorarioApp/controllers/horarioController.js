@@ -326,7 +326,7 @@ exports.guardar = (req, res, next) => {
 
 
   // Identificamos al alumno con su correo electŕonico
-  const correo = 'prueba@upm.es';
+  const correo = req.session.cas_user;
 
   // Función que devuelve una promesa que añade un horario a la BBDD
   const promesaCreaHorario = () => new Promise((resolve, reject) => resolve(
@@ -466,7 +466,7 @@ exports.getActual = (req, res, next) => {
 
 // GET /horarios_guardados
 exports.cargar = (req, res, next) => {
-  const correo = 'prueba@upm.es';
+  const correo = req.session.cas_user; // Correo con el que ha iniciado sesión en el CAS
   const horariosFormateados = [];
   const promesaFetchHorarios = (url, gruposMatriculado, horarioId, ano, semestre, plan) => new Promise((resolve, reject) => {
     resolve(
