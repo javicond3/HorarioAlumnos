@@ -9,7 +9,7 @@
  * para posteriormente enviársela al servidor mediante una petición POST.
  */
 $(document).ready(() => {
-  const asignaturasSelec = [];
+  let asignaturasSelec = [];
 
   // Función que comprueba que al menos hay una asignatura seleccionada.
   // Desactiva el botón para continuar en caso de que no haya ninguna.
@@ -49,6 +49,15 @@ $(document).ready(() => {
     removeCode(codigo);
     $(this).fadeOut('slow', () => {
       $(`#disp${id}`).fadeIn('slow');
+    });
+    checkAsigSeleccionada();
+  });
+
+  // Si hace click en el boton de borrar todo
+  $('#deleteAll').click(() => {
+    asignaturasSelec = []; // Se vacía la selección
+    $('tr.selecTableRow').fadeOut('fast', () => { // Se ocultan todas
+      $('tr.dispTableRow').fadeIn('slow'); // Se muestran todas
     });
     checkAsigSeleccionada();
   });
