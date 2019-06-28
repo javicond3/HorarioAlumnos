@@ -51,9 +51,6 @@ exports.updatePlanes = () => {
 
 
 exports.cargar = (req, res, next) => {
-  // URL para pedir el JSON con todos los planes de la ETSIT
-  const url = 'https://pruebas.etsit.upm.es/pdi/progdoc/api/planes';
-
   models.Plan.findAll()
     .then((planes) => {
       res.locals.listaPlanes = planes;
