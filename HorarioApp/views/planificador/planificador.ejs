@@ -9,10 +9,8 @@
                     <label for="plan">Plan de estudios</label>
                     <select class="form-control" id="plan" name="plan">
                         <% if (listaPlanes) { %>
-                        <% Object.keys(listaPlanes).forEach((nomPlan) => { 
-                            const plan = listaPlanes[nomPlan];
-                            %>
-                        <option value="<%= plan.codigo %>"><%= plan.nombreCompleto %></option>
+                        <% listaPlanes.forEach((plan) => { %>
+                        <option value="<%= plan.codigo %>"><%= plan.nombre %></option>
                         <% }); %>
                         <% } %>
                     </select>

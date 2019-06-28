@@ -2,43 +2,13 @@ const fetch = require('node-fetch');
 const Sequelize = require('sequelize');
 const models = require('../models');
 
-/* // Borra todos los planes de la BBDD
-const promesaBorraPlanes = () => new Promise((resolve, reject) => resolve(
-  models.Plan.destroy({
-    where: {},
-    // truncate: true,
-  })
-    .then(() => {
-      console.log('Planes borrados con éxito');
-    })
-    .catch((error) => {
-      console.log(error);
-    }),
-)); */
-
-// Añade un plan a la BBDD
-/* const promesaCreaPlan = plan => new Promise((resolve, reject) => resolve(
-  models.Plan.build({
-    codigo: plan.codigo,
-    acronimo: plan.nombre,
-    nombre: plan.nombreCompleto,
-    cursos: 4,
-  })
-    .save()
-    .then(() => {
-      console.log('Plan creado correctamente');
-    })
-    .catch(Sequelize.ValidationError, (error) => {
-      console.log('Error de validación, los datos del horario no son correctos.');
-      error.errors.forEach((elem) => {
-        console.log(error.errors[elem].value);
-      });
-    })
-    .catch((error) => {
-      console.log(error);
-    }),
-)); */
-
+/**
+ * Función que crea una nueva entrada en la base de datos o actualiza
+ * una existente en función de si existe previamente.
+ *
+ * Admite como parámetros el modelo, la condición para comprobar si ya
+ * existe y un objeto con los nuevos parámetros.
+ */
 const updateOrCreate = (model, where, newItem) => model
   .findOne({ where })
   .then((foundItem) => {
@@ -46,12 +16,12 @@ const updateOrCreate = (model, where, newItem) => model
       // Item not found, create a new one
       return model
         .create(newItem)
-        .then(item => ({ item, created: true }));
+        .then(item => (console.log('Creado nuevo plan')));
     }
     // Found an item, update it
     return model
       .update(newItem, { where })
-      .then(item => ({ item, created: false }));
+      .then(item => (console.log('Plan actualizado')));
   });
 
 
@@ -84,10 +54,9 @@ exports.cargar = (req, res, next) => {
   // URL para pedir el JSON con todos los planes de la ETSIT
   const url = 'https://pruebas.etsit.upm.es/pdi/progdoc/api/planes';
 
-  fetch(url)
-    .then(respuesta => respuesta.json())
-    .then((json) => {
-      res.locals.listaPlanes = json;
+  models.Plan.findAll()
+    .then((planes) => {
+      res.locals.listaPlanes = planes;
       next();
     })
     .catch(err => console.error(err));
