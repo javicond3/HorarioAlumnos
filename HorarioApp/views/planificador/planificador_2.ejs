@@ -49,16 +49,25 @@
 
         </div>
 
-        <div id="selection">
-            <h4>Selección</h4>
+        <% let dtlSemestre = semestre;
+        if (dtlSemestre === '1S') {
+            dtlSemestre = '1º';
+        } else if(dtlSemestre === '2S') {
+            dtlSemestre = '2º';
+        } %>
+
+        <% dtlCursos = horarios[0].cursos.reduce((acc, asig) => `${acc}º, ${asig}º`); %>
+
+        <div id="details">
+            <h4>Detalles</h4>
             <ul>
+                <li>Semestre: <%= dtlSemestre %></li>
+                <li>Cursos: <span id="dtl-cursos"><%= dtlCursos %></span></li>
                 <li>
-                    1er semestre: opción 1
-                    <ul>
-                        <li>2º:22.1, 3º: 32.1</li>
-                    </ul>
+                    Asignaturas: <span id="dtl-nAsig"></span><br>
+                    <span id="dtl-listaAsig"><%= detalles.asignaturas %></span>
                 </li>
-                <li>2º semestre:</li>
+                <li>Total créditos ECTS: <span id="dtl-creditos"> <%= detalles.creditos %></span></li>
             </ul>
         </div>
 

@@ -87,9 +87,9 @@ app.use((req, res, next) => {
 
 /**
  * Los clientes no autenticados son redirigidos al CAS login.
- * Después son redirigidos a la ruta deseada.
+ * Además se comprueba que son alumnos.
  */
-app.use(cas.bounce, permissionController.checkStudentRole);
+// app.use(cas.bounce, permissionController.checkStudentRole);
 
 /**
  * Rutas que comienzan por contextPath usan indexRouter.

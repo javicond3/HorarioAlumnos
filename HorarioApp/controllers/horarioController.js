@@ -12,12 +12,14 @@ exports.fetch = (req, res, next) => {
   const { plan } = req.body;
   const { ano } = req.body;
   const { semestre } = req.body;
+  const detalles = JSON.parse(req.body.detalles);
 
   // Guardamos en locals los datos que necesitamos tener accesibles en las vistas
   res.locals.ano = ano;
   res.locals.semestre = semestre;
   res.locals.plan = plan;
   res.locals.asignaturas = req.body.asigSelec;
+  res.locals.detalles = detalles;
 
   const listaAsignaturas = asignaturas.reduce((acc, asig) => `${acc},${asig}`);
 
@@ -26,6 +28,7 @@ exports.fetch = (req, res, next) => {
 
   // const url = `https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/${plan}/${ano}/${semestre}/${listaAsignaturas}/horarios`;
   const url = `https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/${plan}/201718/${semestre}/${listaAsignaturas}/horarios`;
+  console.log(url);
 
   fetch(url)
     .then(respuesta => respuesta.json())

@@ -56,25 +56,23 @@
             </form>
         </div>
 
+        <% let dtlSemestre = semestre;
+        if (dtlSemestre === '1S') {
+            dtlSemestre = '1º';
+        } else if(dtlSemestre === '2S') {
+            dtlSemestre = '2º';
+        } %>
+
         <div id="details">
             <h4>Detalles</h4>
             <ul>
-                <li>Cursos: 3º, 4º</li>
+                <li>Semestre: <%= dtlSemestre %></li>
+                <li>Cursos: <span id="dtl-cursos"></span></li>
                 <li>
-                    Nº de asignaturas:
-                    <ul>
-                        <li>1er semestre: 6</li>
-                        <li>2º semestre: 4</li>
-                    </ul>
+                    Asignaturas: <span id="dtl-nAsig"></span><br>
+                    <span id="dtl-listaAsig"></span>
                 </li>
-                <li>
-                    Horas de clase:
-                    <ul>
-                        <li>1er semestre: 20h/semana</li>
-                        <li>2º semestre: 16h/semana</li>
-                    </ul>
-                </li>
-                <li>Total créditos ECTS: 55</li>
+                <li>Total créditos ECTS: <span id="dtl-creditos"></span></li>
             </ul>
         </div>
 
@@ -135,11 +133,11 @@
                     <% asignaturas.forEach((asig, index) => { %>
                     <tr class="selecTableRow" id="selec<%= index %>">
                         <td class="codigo d-none"><%= asig.codigo %></td>
-                        <td><%= asig.curso %>º</td>
+                        <td><span class="curso"><%= asig.curso %></span>º</td>
                         <td><%= asig.semestre %></td>
                         <td><%= asig.nombre %></td>
-                        <td><%= asig.acronimo %></td>
-                        <td><%= asig.creditos %></td>
+                        <td class="acronimo"><%= asig.acronimo %></td>
+                        <td class="creditos"><%= asig.creditos %></td>
                         <td>-</td>
                     </tr>
                     <% }); %>
@@ -156,6 +154,7 @@
                 <input type="hidden" name="plan" value="<%= plan %>">
                 <input type="hidden" name="ano" value="<%= ano %>">
                 <input type="hidden" name="semestre" value="<%= semestre %>">
+                <input type="hidden" name="detalles" value="">
                 <button class="btn btn-primary" type="submit" id="confirmar"> Confirmar</button>
             </form>
         </div>
