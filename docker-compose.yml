@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+
+    horarioapp:
+        build:
+            context: .
+        restart: always
+        volumes:
+            - horarioApp:/storage/horarioApp/
+        ports:
+            - "3000:3000"
+            
+volumes:
+    horarioApp:
