@@ -8,7 +8,9 @@ $(document).ready(() => {
   $('#horarioSelector').change(function () { // Cuando cambie el valor
     $('#msg').hide(); // Escondemos el mensaje de guardado (si lo hubiera)
     $('.horarioGuardado').hide(); // Escondemos todas
+    $('.details').hide();
     $(`#horario${this.value}`).show(); // Mostramos la elegida
+    $(`#details${this.value}`).show();
   });
 
   // Añade la clase "solapado" a las casillas en las que coinciden varias asignaturas

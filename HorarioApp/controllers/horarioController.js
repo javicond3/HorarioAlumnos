@@ -115,8 +115,8 @@ const formatearHorarios = (asignaturas) => {
     Object.keys(asignatura.grupos).forEach((nombGrupo, ind) => {
       const grupo = asignatura.grupos[nombGrupo];
 
-      // Variable con el nombre del grupo que modificaremos si es optativa. Ej: "HCOV-1".
-      const nombreGrupo = esOptativa ? `${asignatura.acronimo}-${ind + 1}` : nombGrupo;
+      // Variable con el nombre del grupo que modificaremos si es optativa. Ej: "Opt-HCOV-1".
+      const nombreGrupo = esOptativa ? `Opt-${asignatura.acronimo}-${ind + 1}` : nombGrupo;
 
       // Si el grupo en el que se imparte esta asignatura no está en el objeto, se añade
       // Además se le añade el horario (con días y horas) y las notas
@@ -413,8 +413,28 @@ const generaHorarioConGrupos = (asignaturas, gruposMatriculado, id = 0, ano, sem
     const asig = asignaturas[codigoAsig];
     const nombreAsig = asig.acronimo ? asig.acronimo : asig.nombre;
     const grupMatriculado = gruposMatriculado[asig.curso];
+    let grupoDeAsig = asig.grupos[grupMatriculado];
 
-    asig.grupos[grupMatriculado].horario.forEach((clase) => {
+
+    // Solución temporal debido a las limitaciones de la API para las optativas:
+
+    // Si es undefined es que es una optativa, porque guardamos las optativas como un curso
+    // especial y no se corresponde con el obtenido de la API.
+    // Ej: Según la API el curso de HCOV es 2, pero para nosotros es OptHCOV
+    if (!grupoDeAsig) {
+      asig.curso = `Opt${asig.acronimo}`; // Modificamos el curso según nuestro convenio
+      const grupoCustom = gruposMatriculado[asig.curso];
+      // El último char de nuestro grupo "custom" (un número) indicará el
+      // grupo de optativas correspondiente.
+      // Ej: Opt-HCOV-1 ---> Optativas1.1, Opt-HCOV-2 ---> Optativas1.2
+      const pos = parseInt(grupoCustom[grupoCustom.length - 1], 10); // Último char del grupo (Ej:2)
+      const nombreGrup = Object.keys(asig.grupos)[pos - 1]; // Si es 2, será el segundo (pos 1 en array)
+      grupoDeAsig = asig.grupos[nombreGrup];
+      console.log(`pos: ${pos}`);
+      console.log(`modifOpt: ${nombreGrup}`);
+    }
+
+    grupoDeAsig.horario.forEach((clase) => {
       const { dia } = clase;
       const hora = clase.hora.substring(0, 2);
       if (horarioCombinado.tabla[dia][hora] !== '') { // Si ya había una asignatura de otro curso a esa hora
@@ -425,7 +445,7 @@ const generaHorarioConGrupos = (asignaturas, gruposMatriculado, id = 0, ano, sem
     });
 
     // Añadimos al objeto las notas
-    asig.grupos[grupMatriculado].nota.forEach((nota) => {
+    grupoDeAsig.nota.forEach((nota) => {
       // Si la asignatura a la que pertenece esta nota no está en el objeto, se añade
       if (!horarioCombinado.notas.hasOwnProperty(nombreAsig)) {
         horarioCombinado.notas[nombreAsig] = [];

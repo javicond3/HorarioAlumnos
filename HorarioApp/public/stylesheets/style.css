@@ -32,6 +32,9 @@ main > div > .row {
  .horarioGuardado{
   display: none;
 }
+.details{
+  display: none;
+}
 
 .solapado{
   background-color: red;

@@ -29,28 +29,35 @@
         </div>
 
 
+        <% if (horarios) { %>
+        <% horarios.forEach((horario) => { %>
 
-        <div id="details">
+        <% let dtlSemestre = horario.semestre;
+            if (dtlSemestre === '1S') {
+                dtlSemestre = '1º';
+            } else if(dtlSemestre === '2S') {
+                dtlSemestre = '2º';
+            } %>
+
+        <% dtlGrupos = horario.grupos.reduce((acc, grupo) => `${acc}, ${grupo}`); %>
+
+        <% const dtlAno = horario.ano.substring(0, 4) + '-' + horario.ano.substring(4); %>
+
+        <div class="details" id="details<%= horario.id %>">
             <h4>Detalles</h4>
             <ul>
-                <li>Cursos: 3º, 4º</li>
+                <li>Año: <%= dtlAno %></li>
+                <li>Semestre: <%= dtlSemestre %></li>
+                <li>Grupos: <span id="dtl-grupos"><%= dtlGrupos %></span></li>
                 <li>
-                    Nº de asignaturas:
-                    <ul>
-                        <li>1er semestre: 6</li>
-                        <li>2º semestre: 4</li>
-                    </ul>
+                    Asignaturas: <span id="dtl-nAsig"></span><br>
+                    <span id="dtl-listaAsig"> detalles.asignaturas </span>
                 </li>
-                <li>
-                    Horas de clase:
-                    <ul>
-                        <li>1er semestre: 20h/semana</li>
-                        <li>2º semestre: 16h/semana</li>
-                    </ul>
-                </li>
-                <li>Total créditos ECTS: 55</li>
+                <li>Total créditos ECTS: <span id="dtl-creditos"> detalles.creditos </span></li>
             </ul>
         </div>
+        <% }); %>
+        <% } %>
 
     </div>
 
