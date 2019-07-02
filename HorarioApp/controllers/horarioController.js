@@ -319,6 +319,8 @@ exports.guardar = (req, res, next) => {
   const asignaturas = JSON.parse(req.body.asignaturas); // Array con códigos de asignaturas selec.
   const cursos = JSON.parse(req.body.cursos);
   const grupos = JSON.parse(req.body.grupos);
+  const { listaAcronimos } = req.body;
+  const { creditos } = req.body;
 
   /* // Recuperamos el plan al que corresponde el horario de la BBDD
     let planBuscado;
@@ -339,6 +341,8 @@ exports.guardar = (req, res, next) => {
       asignaturas,
       cursos,
       grupos,
+      listaAcronimos,
+      creditos,
       alumnoId: correo,
       planId: plan,
     })
@@ -389,7 +393,7 @@ exports.guardar = (req, res, next) => {
  * El parámetro id solo se usa para identificar los horarios en la vista
  * horarios_guardados, en la vista curso_actual/horario no se usa.
  */
-const generaHorarioConGrupos = (asignaturas, gruposMatriculado, id = 0, ano, semestre, plan) => {
+const generaHorarioConGrupos = (asignaturas, gruposMatriculado, id = 0, ano, semestre, plan, listaAcronimos, creditos) => {
   // Array con los grupos (solo para mostrarlos en las vistas)
   const arrayGrupos = [];
   Object.keys(gruposMatriculado).forEach((curso) => {
@@ -406,6 +410,8 @@ const generaHorarioConGrupos = (asignaturas, gruposMatriculado, id = 0, ano, sem
     asignaturas: [], // Array con los códigos de las asignaturas
     tabla: generaDiasConHoras(), // Tabla para representarlo en la vista
     notas: {}, // Observaciones
+    listaAcronimos,
+    creditos,
   };
 
   Object.keys(asignaturas).forEach((codigoAsig) => {
@@ -430,8 +436,6 @@ const generaHorarioConGrupos = (asignaturas, gruposMatriculado, id = 0, ano, sem
       const pos = parseInt(grupoCustom[grupoCustom.length - 1], 10); // Último char del grupo (Ej:2)
       const nombreGrup = Object.keys(asig.grupos)[pos - 1]; // Si es 2, será el segundo (pos 1 en array)
       grupoDeAsig = asig.grupos[nombreGrup];
-      console.log(`pos: ${pos}`);
-      console.log(`modifOpt: ${nombreGrup}`);
     }
 
     grupoDeAsig.horario.forEach((clase) => {
@@ -491,13 +495,13 @@ exports.getActual = (req, res, next) => {
 exports.cargar = (req, res, next) => {
   const correo = req.session.cas_user; // Correo con el que ha iniciado sesión en el CAS
   const horariosFormateados = [];
-  const promesaFetchHorarios = (url, gruposMatriculado, horarioId, ano, semestre, plan) => new Promise((resolve, reject) => {
+  const promesaFetchHorarios = (url, gruposMatriculado, horarioId, ano, semestre, plan, listaAcronimos, creditos) => new Promise((resolve, reject) => {
     resolve(
       fetch(url)
         .then(respuesta => respuesta.json())
         .then((json) => {
           const asigConHorario = json;
-          const horarioFormateado = generaHorarioConGrupos(asigConHorario, gruposMatriculado, horarioId, ano, semestre, plan);
+          const horarioFormateado = generaHorarioConGrupos(asigConHorario, gruposMatriculado, horarioId, ano, semestre, plan, listaAcronimos, creditos);
           horariosFormateados.push(horarioFormateado);
         })
         .catch(err => console.error(err)),
@@ -514,6 +518,8 @@ exports.cargar = (req, res, next) => {
         const { cursos } = horario;
         const { grupos } = horario;
         const plan = horario.planId;
+        const { listaAcronimos } = horario;
+        const { creditos } = horario;
 
         const listaAsignaturas = asignaturas.reduce((acc, asig) => `${acc},${asig}`);
 
@@ -530,7 +536,7 @@ exports.cargar = (req, res, next) => {
 
         const url = `https://pruebas.etsit.upm.es/pdi/progdoc/api/asignaturas/${plan}/${ano}/${semestre}/${listaAsignaturas}/horarios`;
 
-        promises.push(promesaFetchHorarios(url, gruposMatriculado, horarioId, ano, semestre, plan));
+        promises.push(promesaFetchHorarios(url, gruposMatriculado, horarioId, ano, semestre, plan, listaAcronimos, creditos));
       });
 
       return Promise.all(promises);

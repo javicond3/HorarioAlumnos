@@ -19,4 +19,10 @@ module.exports = (sequelize, DataTypes) => sequelize.define('Horario', {
   grupos: {
     type: DataTypes.ARRAY(DataTypes.STRING),
   },
+  listaAcronimos: {
+    type: DataTypes.STRING,
+  },
+  creditos: {
+    type: DataTypes.STRING,
+  },
 });
