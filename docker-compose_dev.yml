@@ -8,7 +8,7 @@ services:
         volumes:
             - dbdata:/var/lib/postgres/
     
-    horarioApp:
+    horarioapp:
         depends_on:
             - db
             
