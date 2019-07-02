@@ -15,6 +15,26 @@ main > div > .row {
   padding-top: 15px;
 }
 
+nav {
+  background-color: #4664A2;
+}
+
+.navbar-brand {
+  color: white;
+}
+
+a:hover.navbar-brand {
+  color: wheat;
+}
+
+.nav-item a {
+  color: white;
+}
+
+.nav-item a:hover {
+  color: wheat;
+}
+
 #navTop {
   margin-right: 50px;
 }
