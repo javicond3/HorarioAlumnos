@@ -56,7 +56,8 @@
             dtlSemestre = '2º';
         } %>
 
-        <% dtlCursos = horarios[0].cursos.reduce((acc, asig) => `${acc}º, ${asig}º`); %>
+        <% dtlCursos = horarios[0].cursos.reduce((acc, asig) => { `${acc}, ${asig}`});
+            %>
 
         <div id="details">
             <h4>Detalles</h4>

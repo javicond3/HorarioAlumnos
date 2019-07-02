@@ -12,6 +12,15 @@
     <!-- Custom CSS -->
     <link rel='stylesheet' href='<%= contextPath %>/stylesheets/style.css' />
 
+    <!-- Custom CSS -->
+    <script src="https://portal.etsit.upm.es/estudiantes/static-button"></script>
+
+    <style>
+        .open-6659b527b8d152af596e174303b316a7 {
+            position: fixed !important;
+        }
+    </style>
+
     <title>HorarioApp</title>
 </head>
 
@@ -34,10 +43,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="<%= contextPath %>/horarios_guardados">Horarios guardados</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<%= contextPath %>/logout">Logout</a>
-                    </li>
                 </ul>
+                <br>
+                <div id="buttonMenuPortales123" style="position:fixed; z-index:4; text-align: right"></div>
             </div>
         </nav>
     </header>
@@ -61,6 +69,12 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            let contextPath = '<%-contextPath%>';
+            dibujarmenulateral("buttonMenuPortales123", contextPath + "/logout", '<%=session.user.mail%>', '<%=session.user.cn%>');
+        });
+    </script>
     <% if (Array.isArray(scripts) && scripts.length) { %>
     <% scripts.forEach(script => { %>
     <script src="<%= contextPath %>/js/<%= script %>.js"></script>

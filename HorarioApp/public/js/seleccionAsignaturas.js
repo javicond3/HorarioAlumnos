@@ -52,7 +52,7 @@ $(document).ready(() => {
     });
     let listaCursos = '';
     if (acronimos.length > 0) {
-      listaCursos = cursosSelec.reduce((acc, cur) => `${acc}º, ${cur}º`);
+      listaCursos = cursosSelec.reduce((acc, cur) => `${acc}, ${cur}`);
     }
 
 

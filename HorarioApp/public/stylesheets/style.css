@@ -7,11 +7,16 @@ body {
   margin-bottom: 56px; /* Margin bottom by footer height */
 }
 
+
 /* Para que el contenido principal ocupe todo
  * el espacio entre el header y el footer */
 main > div > .row {
   min-height: calc(100vh - 112px); /* 100vh - x, where x=header+footer height */
   padding-top: 15px;
+}
+
+#navTop {
+  margin-right: 50px;
 }
 
 /* En el planificador, las filas de la tabla de seleccionadas
